@@ -1,0 +1,450 @@
+{% comment %}
+  Section: A Legacy You Can Wear — Trust Pillars
+  Place in: sections/trust-pillars.liquid
+  Add to page via: Customize > Add Section
+{% endcomment %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+  #shopify-section-{{ section.id }} {
+    font-family: 'Lato', sans-serif;
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px;
+  }
+
+  .tp-inner-{{ section.id }} {
+    max-width: {{ section.settings.content_max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .tp-header-{{ section.id }} {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .tp-label-{{ section.id }} {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: {{ section.settings.accent_color }};
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .tp-label-{{ section.id }}::before,
+  .tp-label-{{ section.id }}::after {
+    content: '';
+    display: inline-block;
+    width: 28px;
+    height: 1px;
+    background: {{ section.settings.accent_color }};
+  }
+
+  .tp-headline-{{ section.id }} {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: {{ section.settings.headline_size }}px;
+    font-weight: 400;
+    color: {{ section.settings.headline_color }};
+    margin: 0 0 0.75rem;
+    line-height: 1.3;
+  }
+
+  .tp-sub-{{ section.id }} {
+    font-size: 14px;
+    color: {{ section.settings.subheading_color }};
+    line-height: 1.8;
+    font-weight: 300;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .tp-grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns }}, 1fr);
+    gap: {{ section.settings.card_gap }}px;
+  }
+
+  .tp-pillar-{{ section.id }} {
+    background: {{ section.settings.card_bg_color }};
+    border: 1px solid {{ section.settings.card_border_color }};
+    border-radius: {{ section.settings.card_radius }}px;
+    padding: 1.5rem 1.25rem;
+    text-align: {{ section.settings.card_align }};
+  }
+
+  {% if section.settings.card_align == 'center' %}
+  .tp-pillar-{{ section.id }} .tp-icon-wrap {
+    margin: 0 auto 14px;
+  }
+  {% else %}
+  .tp-pillar-{{ section.id }} .tp-icon-wrap {
+    margin: 0 0 14px;
+  }
+  {% endif %}
+
+  .tp-icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: {{ section.settings.icon_bg_color }};
+    border: 1px solid {{ section.settings.accent_color }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tp-icon-wrap svg {
+    width: 18px;
+    height: 18px;
+    stroke: {{ section.settings.accent_color }};
+    fill: none;
+    stroke-width: 1.5;
+  }
+
+  .tp-pillar-title-{{ section.id }} {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: {{ section.settings.card_title_color }};
+    margin-bottom: 8px;
+  }
+
+  .tp-pillar-body-{{ section.id }} {
+    font-size: 13px;
+    color: {{ section.settings.card_body_color }};
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  {% if section.settings.show_divider %}
+  .tp-divider-{{ section.id }} {
+    border: none;
+    border-top: 1px solid {{ section.settings.accent_color }};
+    opacity: 0.25;
+    margin: 0 0 2.5rem;
+  }
+  {% endif %}
+
+  @media (max-width: 768px) {
+    .tp-grid-{{ section.id }} {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .tp-grid-{{ section.id }} {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<section id="trust-pillars-{{ section.id }}">
+  <div class="tp-inner-{{ section.id }}">
+
+    {% if section.settings.show_divider %}
+      <hr class="tp-divider-{{ section.id }}">
+    {% endif %}
+
+    {% if section.settings.label != blank or section.settings.headline != blank %}
+      <div class="tp-header-{{ section.id }}">
+        {% if section.settings.label != blank %}
+          <div class="tp-label-{{ section.id }}"><span>{{ section.settings.label }}</span></div>
+        {% endif %}
+        {% if section.settings.headline != blank %}
+          <h2 class="tp-headline-{{ section.id }}">{{ section.settings.headline }}</h2>
+        {% endif %}
+        {% if section.settings.subheading != blank %}
+          <p class="tp-sub-{{ section.id }}">{{ section.settings.subheading }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="tp-grid-{{ section.id }}">
+      {% for block in section.blocks %}
+        <div class="tp-pillar-{{ section.id }}" {{ block.shopify_attributes }}>
+          <div class="tp-icon-wrap">
+            {% case block.settings.icon %}
+              {% when 'heart' %}
+                <svg viewBox="0 0 24 24"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
+              {% when 'lotus' %}
+                <svg viewBox="0 0 24 24"><path d="M12 22V12m0 0C12 7 7 4 2 6c0 5 4 9 10 6zm0 0c0-5 5-8 10-6-0 5-4 9-10 6z"/></svg>
+              {% when 'shield' %}
+                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              {% when 'star' %}
+                <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+              {% when 'lock' %}
+                <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              {% when 'layers' %}
+                <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              {% when 'award' %}
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+              {% when 'check' %}
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12l2.5 2.5L16 9"/></svg>
+              {% else %}
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12l2.5 2.5L16 9"/></svg>
+            {% endcase %}
+          </div>
+          <div class="tp-pillar-title-{{ section.id }}">{{ block.settings.title }}</div>
+          <div class="tp-pillar-body-{{ section.id }}">{{ block.settings.body }}</div>
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Trust Pillars",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Header Content"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Section Label",
+      "default": "Why Choose Us"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "A Legacy You Can Wear"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading (optional)",
+      "default": "Sub heading"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show top divider line",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Cards Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Columns (desktop)",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Gap between cards (px)",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card Corner Radius (px)",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "default": 8
+    },
+    {
+      "type": "select",
+      "id": "card_align",
+      "label": "Card Content Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section Background",
+      "default": "#3B2504"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Card Background",
+      "default": "#4A2F08"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card Border Color",
+      "default": "#6B4A1A"
+    },
+    {
+      "type": "color",
+      "id": "icon_bg_color",
+      "label": "Icon Circle Background",
+      "default": "#5A3A10"
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Headline Color",
+      "default": "#F2E2C0"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading Color",
+      "default": "#C9A84C"
+    },
+    {
+      "type": "color",
+      "id": "card_title_color",
+      "label": "Card Title Color",
+      "default": "#F2E2C0"
+    },
+    {
+      "type": "color",
+      "id": "card_body_color",
+      "label": "Card Body Text Color",
+      "default": "#C9A84C"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent / Gold Color (icons, labels)",
+      "default": "#C9A84C"
+    },
+    {
+      "type": "header",
+      "content": "Typography & Spacing"
+    },
+    {
+      "type": "range",
+      "id": "headline_size",
+      "label": "Headline Font Size (px)",
+      "min": 18,
+      "max": 44,
+      "step": 2,
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content Max Width (px)",
+      "min": 800,
+      "max": 1400,
+      "step": 50,
+      "default": 1100
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Padding Top (px)",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Padding Bottom (px)",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "default": 56
+    }
+  ],
+  "blocks": [
+    {
+      "type": "pillar",
+      "name": "Trust Pillar",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "heart", "label": "Heart" },
+            { "value": "lotus", "label": "Lotus" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "star", "label": "Star" },
+            { "value": "lock", "label": "Lock / Heritage" },
+            { "value": "layers", "label": "Layers / Fabric" },
+            { "value": "award", "label": "Award" },
+            { "value": "check", "label": "Checkmark" }
+          ],
+          "default": "heart"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Pillar Title",
+          "default": "Handwoven with Love"
+        },
+        {
+          "type": "textarea",
+          "id": "body",
+          "label": "Pillar Description",
+          "default": "Crafted by experienced weavers with generations of expertise, never mass-produced."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust Pillars",
+      "blocks": [
+        {
+          "type": "pillar",
+          "settings": {
+            "icon": "heart",
+            "title": "Handwoven with Love",
+            "body": "Crafted by experienced weavers with generations of expertise, never mass-produced."
+          }
+        },
+        {
+          "type": "pillar",
+          "settings": {
+            "icon": "lotus",
+            "title": "Rooted in Spirituality",
+            "body": "Inspired by the culture, traditions, and devotion of Banaras — infused in every motif."
+          }
+        },
+        {
+          "type": "pillar",
+          "settings": {
+            "icon": "shield",
+            "title": "Pure & Authentic",
+            "body": "Finest quality silk and zari, woven with honesty and care. No shortcuts, ever."
+          }
+        },
+        {
+          "type": "pillar",
+          "settings": {
+            "icon": "lock",
+            "title": "Heritage That Lives On",
+            "body": "Preserving the rich legacy of Banarasi weaving for generations to come."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

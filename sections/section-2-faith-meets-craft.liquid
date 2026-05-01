@@ -1,0 +1,395 @@
+{% comment %}
+  Section: Where Faith Meets Craft
+  Place in: sections/faith-meets-craft.liquid
+  Add to page via: Customize > Add Section
+{% endcomment %}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    font-family: 'Lato', sans-serif;
+    background-color: {{ section.settings.bg_color }};
+  }
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.section_padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.section_padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+ 
+  .fmc-inner-{{ section.id }} {
+    max-width: {{ section.settings.content_max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .fmc-header-{{ section.id }} {
+    text-align: {{ section.settings.header_align }};
+    margin-bottom: 2.5rem;
+  }
+
+  .fmc-label-{{ section.id }} {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: {{ section.settings.accent_color }};
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .fmc-label-{{ section.id }}::before,
+  .fmc-label-{{ section.id }}::after {
+    content: '';
+    display: inline-block;
+    width: 28px;
+    height: 1px;
+    background: {{ section.settings.accent_color }};
+  }
+
+  .fmc-headline-{{ section.id }} {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: {{ section.settings.headline_size }}px;
+    font-weight: 400;
+    color: {{ section.settings.headline_color }};
+    margin: 0 0 0.75rem;
+    line-height: 1.3;
+  }
+
+  .fmc-sub-{{ section.id }} {
+    font-size: 14.5px;
+    color: {{ section.settings.body_color }};
+    line-height: 1.85;
+    font-weight: 300;
+    max-width: 560px;
+    {% if section.settings.header_align == 'center' %}margin: 0 auto;{% endif %}
+  }
+
+  .fmc-cards-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns }}, 1fr);
+    gap: {{ section.settings.card_gap }}px;
+  }
+
+  .fmc-card-{{ section.id }} {
+    background: {{ section.settings.card_bg_color }};
+    border: 1px solid {{ section.settings.card_border_color }};
+    border-radius: {{ section.settings.card_radius }}px;
+    padding: 1.5rem 1.25rem;
+  }
+
+  .fmc-card-icon-{{ section.id }} {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid {{ section.settings.accent_color }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+
+  .fmc-card-icon-{{ section.id }} svg {
+    width: 18px;
+    height: 18px;
+    stroke: {{ section.settings.accent_color }};
+    fill: none;
+    stroke-width: 1.5;
+  }
+
+  .fmc-card-title-{{ section.id }} {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: {{ section.settings.card_title_color }};
+    margin-bottom: 8px;
+  }
+
+  .fmc-card-body-{{ section.id }} {
+    font-size: 13.5px;
+    color: {{ section.settings.body_color }};
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+   @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.section_padding_top }}px;
+      padding-bottom: {{ section.settings.section_padding_bottom }}px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .fmc-cards-{{ section.id }} {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+{%- assign icons = "clock|shield|check-circle" | split: "|" -%}
+
+<section class="section-{{ section.id }}-padding" id="faith-meets-craft-{{ section.id }}">
+  <div class="fmc-inner-{{ section.id }}">
+
+    <div class="fmc-header-{{ section.id }}">
+      {% if section.settings.label != blank %}
+        <div class="fmc-label-{{ section.id }}"><span>{{ section.settings.label }}</span></div>
+      {% endif %}
+      <h2 class="fmc-headline-{{ section.id }}">{{ section.settings.headline }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="fmc-sub-{{ section.id }}">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </div>
+
+    <div class="fmc-cards-{{ section.id }}">
+      {% for block in section.blocks %}
+        <div class="fmc-card-{{ section.id }}" {{ block.shopify_attributes }}>
+          <div class="fmc-card-icon-{{ section.id }}">
+            {% case block.settings.icon %}
+              {% when 'clock' %}
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              {% when 'shield' %}
+                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              {% when 'star' %}
+                <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+              {% when 'leaf' %}
+                <svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 19c0 0 4.18-1 6.18-5 2-4 5-5 8-2 .5-2 .5-8-1-4z"/></svg>
+              {% when 'heart' %}
+                <svg viewBox="0 0 24 24"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
+              {% when 'award' %}
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+              {% else %}
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12l2.5 2.5L16 9"/></svg>
+            {% endcase %}
+          </div>
+          <div class="fmc-card-title-{{ section.id }}">{{ block.settings.title }}</div>
+          <div class="fmc-card-body-{{ section.id }}">{{ block.settings.body }}</div>
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Faith Meets Craft",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Header Content"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Section Label",
+      "default": "Our Craft"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Where Faith Meets Craft"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "From the ghats to the looms, every saree carries the soul of Banaras. It is more than a garment — it is a heritage woven in devotion."
+    },
+    {
+      "type": "select",
+      "id": "header_align",
+      "label": "Header Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Cards Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Columns (desktop)",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Gap between cards (px)",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card Corner Radius (px)",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section Background",
+      "default": "#FEF8F0"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Card Background",
+      "default": "#F9F4EC"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card Border Color",
+      "default": "#C9A84C"
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Headline Color",
+      "default": "#3B2504"
+    },
+    {
+      "type": "color",
+      "id": "card_title_color",
+      "label": "Card Title Color",
+      "default": "#3B2504"
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Body Text Color",
+      "default": "#5A3D1A"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent / Gold Color",
+      "default": "#8B6914"
+    },
+    {
+      "type": "header",
+      "content": "Typography & Spacing"
+    },
+    {
+      "type": "range",
+      "id": "headline_size",
+      "label": "Headline Font Size (px)",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content Max Width (px)",
+      "min": 800,
+      "max": 1400,
+      "step": 50,
+      "default": 1100
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Padding Top (px)",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Padding Bottom (px)",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "craft_card",
+      "name": "Craft Card",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "check", "label": "Checkmark" },
+            { "value": "clock", "label": "Clock" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "star", "label": "Star" },
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "heart", "label": "Heart" },
+            { "value": "award", "label": "Award" }
+          ],
+          "default": "check"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Card Title",
+          "default": "Generations of Mastery"
+        },
+        {
+          "type": "textarea",
+          "id": "body",
+          "label": "Card Description",
+          "default": "Our weavers carry a skill handed down through family lineages spanning over 200 years. No machine can replicate what devotion teaches."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Faith Meets Craft",
+      "blocks": [
+        {
+          "type": "craft_card",
+          "settings": {
+            "icon": "clock",
+            "title": "Generations of Mastery",
+            "body": "Our weavers carry a skill handed down through family lineages spanning over 200 years. No machine can replicate what devotion teaches."
+          }
+        },
+        {
+          "type": "craft_card",
+          "settings": {
+            "icon": "shield",
+            "title": "Pure Silk & Zari",
+            "body": "Finest quality mulberry silk and authentic gold-silver zari — sourced with honesty and woven with care into every inch of the fabric."
+          }
+        },
+        {
+          "type": "craft_card",
+          "settings": {
+            "icon": "award",
+            "title": "GI-Tagged Heritage",
+            "body": "Banarasi sarees hold a Geographical Indication tag — a mark of authenticity that guarantees you receive the real thing."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

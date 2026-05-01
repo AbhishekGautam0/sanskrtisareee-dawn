@@ -1,0 +1,342 @@
+{% comment %}
+  Section: Our Story — Woven in Devotion
+  Place in: sections/our-story.liquid
+  Add to page via: Customize > Add Section
+{% endcomment %}
+
+
+<style>
+  #shopify-section-{{ section.id }} {
+    font-family: 'Lato', sans-serif;
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px;
+  }
+
+  .our-story-{{ section.id }} {
+    max-width: {{ section.settings.content_max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .our-story-{{ section.id }} .story-label {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: {{ section.settings.accent_color }};
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .our-story-{{ section.id }} .story-label::before,
+  .our-story-{{ section.id }} .story-label::after {
+    content: '';
+    display: inline-block;
+    width: 28px;
+    height: 1px;
+    background: {{ section.settings.accent_color }};
+  }
+
+  .our-story-{{ section.id }} .story-headline {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: {{ section.settings.headline_size }}px;
+    font-weight: 400;
+    line-height: 1.25;
+    color: {{ section.settings.headline_color }};
+    margin: 0 0 1rem;
+  }
+
+  .our-story-{{ section.id }} .story-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.2rem;
+  }
+
+  .our-story-{{ section.id }} .story-divider hr {
+    flex: 1;
+    border: none;
+    border-top: 1px solid {{ section.settings.accent_color }};
+  }
+
+  .our-story-{{ section.id }} .story-divider span {
+    font-size: 10px;
+    color: {{ section.settings.accent_color }};
+  }
+
+  .our-story-{{ section.id }} .story-body {
+    font-size: 14px;
+    line-height: 1.85;
+    color: {{ section.settings.body_color }};
+    font-weight: 300;
+    margin-bottom: 1rem;
+  }
+
+  .our-story-{{ section.id }} .story-right-card {
+    background: {{ section.settings.card_bg_color }};
+    border-radius: 8px;
+    padding: 2rem;
+    border: 1px solid {{ section.settings.accent_color }};
+    position: relative;
+    overflow: hidden;
+  }
+
+  .our-story-{{ section.id }} .story-right-ornament {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 80px;
+    color: {{ section.settings.accent_color }};
+    opacity: 0.15;
+    position: absolute;
+    top: -15px;
+    right: 20px;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .our-story-{{ section.id }} .story-quote {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-style: italic;
+    font-size: 16px;
+    line-height: 1.75;
+    color: {{ section.settings.headline_color }};
+    margin-bottom: 1.2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .our-story-{{ section.id }} .story-quote-attr {
+    font-size: 11.5px;
+    color: {{ section.settings.body_color }};
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  {% if section.settings.show_cta %}
+  .our-story-{{ section.id }} .story-cta {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 12px 28px;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: {{ section.settings.cta_text_color }};
+    background: {{ section.settings.cta_bg_color }};
+    border: 1px solid {{ section.settings.cta_bg_color }};
+    border-radius: 2px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .our-story-{{ section.id }} .story-cta:hover { opacity: 0.8; }
+  {% endif %}
+
+  @media (max-width: 768px) {
+    .our-story-{{ section.id }} {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+</style>
+
+<section id="our-story-{{ section.id }}">
+  <div class="our-story-{{ section.id }}">
+
+    <div class="story-left">
+      {% if section.settings.label != blank %}
+        <div class="story-label"><span>{{ section.settings.label }}</span></div>
+      {% endif %}
+
+      <h2 class="story-headline">{{ section.settings.headline }}</h2>
+
+      <div class="story-divider">
+        <hr/><span>✦</span><hr/>
+      </div>
+
+      {% if section.settings.body_text_1 != blank %}
+        <p class="story-body">{{ section.settings.body_text_1 }}</p>
+      {% endif %}
+
+      {% if section.settings.body_text_2 != blank %}
+        <p class="story-body">{{ section.settings.body_text_2 }}</p>
+      {% endif %}
+
+      {% if section.settings.show_cta and section.settings.cta_label != blank %}
+        <a href="{{ section.settings.cta_url }}" class="story-cta">{{ section.settings.cta_label }}</a>
+      {% endif %}
+    </div>
+
+    <div class="story-right">
+      <div class="story-right-card">
+        <div class="story-right-ornament">"</div>
+        <p class="story-quote">{{ section.settings.quote_text }}</p>
+        <div class="story-quote-attr">— {{ section.settings.quote_attribution }}</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Our Story",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Section Label (above headline)",
+      "default": "Our Story"
+    },
+    {
+      "type": "textarea",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Woven in Devotion,\nRooted in Banaras"
+    },
+    {
+      "type": "textarea",
+      "id": "body_text_1",
+      "label": "Body Text (Paragraph 1)",
+      "default": "Banaras is not just a city — it is a feeling. A land where devotion flows like the Ganga, and every thread is blessed with centuries of living tradition."
+    },
+    {
+      "type": "textarea",
+      "id": "body_text_2",
+      "label": "Body Text (Paragraph 2)",
+      "default": "Our sarees are handwoven by skilled artisans whose craft has been passed down through generations. Each weave is a tribute to the timeless beauty, spirituality, and heritage of this sacred city."
+    },
+    {
+      "type": "textarea",
+      "id": "quote_text",
+      "label": "Pull Quote",
+      "default": "Every saree carries the soul of Banaras — from the ghats to the loom, from prayers to patterns, woven in devotion."
+    },
+    {
+      "type": "text",
+      "id": "quote_attribution",
+      "label": "Quote Attribution",
+      "default": "Banaras, where faith meets craft"
+    },
+    {
+      "type": "header",
+      "content": "Call to Action"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta",
+      "label": "Show Button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button Text",
+      "default": "Explore Our Sarees"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button Link"
+    },
+    {
+      "type": "color",
+      "id": "cta_bg_color",
+      "label": "Button Background Color",
+      "default": "#3B2504"
+    },
+    {
+      "type": "color",
+      "id": "cta_text_color",
+      "label": "Button Text Color",
+      "default": "#F2E2C0"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section Background",
+      "default": "#F9F4EC"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Quote Card Background",
+      "default": "#EDE3CE"
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Headline Color",
+      "default": "#3B2504"
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Body Text Color",
+      "default": "#5A3D1A"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent / Gold Color",
+      "default": "#8B6914"
+    },
+    {
+      "type": "header",
+      "content": "Typography & Layout"
+    },
+    {
+      "type": "range",
+      "id": "headline_size",
+      "label": "Headline Font Size (px)",
+      "min": 22,
+      "max": 52,
+      "step": 2,
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content Max Width (px)",
+      "min": 800,
+      "max": 1400,
+      "step": 50,
+      "default": 1100
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Padding Top (px)",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Padding Bottom (px)",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "default": 64
+    }
+  ],
+  "presets": [
+    {
+      "name": "Our Story"
+    }
+  ]
+}
+{% endschema %}

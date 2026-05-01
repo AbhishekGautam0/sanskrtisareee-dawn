@@ -1,0 +1,575 @@
+{%- liquid
+  assign media_count = product.media.size
+  assign enable_zoom = section.settings.enable_zoom | default: true
+  assign thumb_pos = section.settings.thumb_position | default: 'left'
+  assign aspect_ratio = section.settings.media_aspect_ratio | default: '3/4'
+  assign thumb_width = section.settings.thumb_width | default: 72
+  assign thumb_gap = section.settings.thumb_gap | default: 8
+  assign thumb_count = section.settings.thumb_visible | default: 4
+-%}
+
+<style>
+  /* ============================================================
+     CSS VARIABLES — driven by section schema
+     ============================================================ */
+  .pmg-wrap-{{ section.id }} {
+    --pmg-thumb-w:       {{ thumb_width }}px;
+    --pmg-thumb-gap:     {{ thumb_gap }}px;
+    --pmg-thumb-count:   {{ thumb_count }};
+    --pmg-thumb-radius:  {{ section.settings.thumb_radius | default: 6 }}px;
+    --pmg-main-radius:   {{ section.settings.main_radius | default: 10 }}px;
+    --pmg-gap:           {{ section.settings.gallery_gap | default: 12 }}px;
+    --pmg-accent:        {{ section.settings.accent_color | default: '#8b1a1a' }};
+    --pmg-thumb-border:  {{ section.settings.thumb_border_color | default: '#e0d0c0' }};
+    --pmg-bg:            {{ section.settings.gallery_bg | default: '#0d0d0d' }};
+    --pmg-aspect:        {{ aspect_ratio }};
+    --pmg-zoom-scale:    {{ section.settings.zoom_scale | default: '2.2' }};
+  }
+
+ 
+  .pmg-wrap {
+    display: flex;
+    gap: var(--pmg-gap);
+    width: 100%;
+    {% if thumb_pos == 'right' %}
+      flex-direction: row-reverse;
+    {% else %}
+      flex-direction: row;
+    {% endif %}
+  }
+
+  .pmg-thumbs-col {
+    flex: 0 0 var(--pmg-thumb-w);
+    width: var(--pmg-thumb-w);
+    overflow: hidden;
+  }
+
+  /* Splide thumb track */
+  .pmg-thumbs .splide__track {
+    overflow: hidden;
+    /* Explicit height so Splide ttb direction works correctly */
+    height: 100%;
+  }
+
+  /* The outer thumb col must have an explicit height for ttb */
+  .pmg-thumbs-col {
+    flex: 0 0 var(--pmg-thumb-w);
+    width: var(--pmg-thumb-w);
+    overflow: hidden;
+    /* Height = (thumb-h × count) + (gap × count-1)
+       thumb-h = thumb-w × 4/3 for 3:4 ratio
+       This matches the JS colHeight calculation exactly */
+    height: calc(
+      (var(--pmg-thumb-w) * 1.333 * var(--pmg-thumb-count))
+      + (var(--pmg-thumb-gap) * (var(--pmg-thumb-count) - 1))
+    );
+  }
+
+  .pmg-thumbs,
+  .pmg-thumbs .splide__track,
+  .pmg-thumbs .splide__list {
+    height: 100% !important;
+  }
+
+  .pmg-thumbs .splide__list {
+    gap: var(--pmg-thumb-gap) !important;
+    flex-direction: column !important;
+  }
+
+  .pmg-thumb-slide {
+    cursor: pointer;
+    border-radius: var(--pmg-thumb-radius);
+    overflow: hidden;
+    border: 1.5px solid transparent;
+    transition: border-color 0.2s ease;
+    /* Explicit height for ttb direction — matches JS thumbH calculation */
+    width: var(--pmg-thumb-w) !important;
+    height: calc(var(--pmg-thumb-w) * 1.333) !important;
+    flex-shrink: 0;
+    {% comment %} background: #1a1a1a; {% endcomment %}
+  }
+
+  .pmg-thumb-slide.is-active,
+  .pmg-thumb-slide:hover {
+    border-color: var(--pmg-accent) !important;
+  }
+
+  .pmg-thumb-slide img,
+  .pmg-thumb-slide video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: calc(var(--pmg-thumb-radius) - 1px);
+  }
+
+  /* Video thumb overlay icon */
+  .pmg-thumb-slide--video {
+    position: relative;
+  }
+
+  .pmg-thumb-slide--video::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Ccircle cx='12' cy='12' r='11' fill='rgba(0,0,0,0.45)'/%3E%3Cpolygon points='10,8 16,12 10,16'/%3E%3C/svg%3E") center / 32px no-repeat;
+  }
+
+
+  .pmg-main-col {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    border-radius: var(--pmg-main-radius);
+  }
+
+  .pmg-main .splide__track {
+    overflow: hidden;
+    border-radius: var(--pmg-main-radius);
+  }
+
+  /* Each main slide */
+  .pmg-main-slide {
+    /* CLS: explicit ratio so browser reserves space before image loads */
+    aspect-ratio: var(--pmg-aspect);
+    background: var(--pmg-bg);
+    overflow: hidden;
+    position: relative;
+    border-radius: var(--pmg-main-radius);
+  }
+
+  .pmg-main-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: var(--pmg-main-radius);
+    /* GPU-composite only transform — no repaints */
+    transition: transform 0.35s ease;
+    transform-origin: var(--pmg-zoom-origin-x, 50%) var(--pmg-zoom-origin-y, 50%);
+    will-change: transform;
+  }
+
+  /* Zoom cursor */
+  {% if enable_zoom %}
+  .pmg-main-slide {
+    cursor: zoom-in;
+  }
+  .pmg-main-slide.is-zoomed {
+    cursor: zoom-out;
+  }
+  .pmg-main-slide.is-zoomed .pmg-main-img {
+    transform: scale(var(--pmg-zoom-scale));
+  }
+  {% endif %}
+
+
+  .pmg-main-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: var(--pmg-main-radius);
+  }
+
+  .pmg-main .splide__arrows {
+    display: none; 
+  }
+
+  @media (max-width: 767px) {
+    .pmg-wrap {
+      flex-direction: column-reverse;
+      margin-bottom: 15px;
+    }
+
+    .pmg-thumbs-col {
+      width: 100%;
+      height: auto !important;
+      flex: none;
+    }
+
+    /* Horizontal thumb row on mobile */
+    .pmg-thumbs .splide__list {
+      flex-direction: row !important;
+      height: auto !important;
+    }
+
+    .pmg-thumbs .splide__slide {
+      width: {{ thumb_width }}px !important;
+      height: calc({{ thumb_width }}px * 1.333) !important;
+    }
+
+    .pmg-main-slide {
+      aspect-ratio: 4 / 5;
+    }
+  }
+</style>
+
+<div class="pmg-wrap pmg-wrap-{{ section.id }}" id="pmg-{{ section.id }}">
+  {%- comment -%} ── THUMBNAIL COLUMN ────────────────────────── {%- endcomment -%}
+  {%- if media_count > 1 -%}
+    <div class="pmg-thumbs-col">
+      <div
+        id="pmg-thumbs-{{ section.id }}"
+        class="splide pmg-thumbs"
+        aria-label="{{ product.title | escape }} — thumbnails"
+      >
+        <div class="splide__track">
+          <ul class="splide__list">
+            {%- assign thumb_size = thumb_width | append: 'px' -%}
+
+            {%- for media in product.media -%}
+              <li
+                class="splide__slide pmg-thumb-slide{% if media.media_type == 'video' or media.media_type == 'external_video' %} pmg-thumb-slide--video{% endif %}"
+                role="button"
+                aria-label="View image {{ forloop.index }}"
+              >
+                {%- if media.media_type == 'image' -%}
+                  {{
+                    media.preview_image
+                    | image_url: width: 200
+                    | image_tag:
+                      loading: 'lazy',
+                      decoding: 'async',
+                      widths: '80, 120, 160',
+                      sizes: thumb_size,
+                      alt: media.alt
+                    | escape
+                  }}
+
+                {%- elsif media.media_type == 'video' or media.media_type == 'external_video' -%}
+                  {{
+                    media.preview_image
+                    | image_url: width: 160
+                    | image_tag:
+                      loading: 'lazy',
+                      decoding: 'async',
+                      widths: '80, 120, 160',
+                      sizes: thumb_size,
+                      alt: media.alt
+                    | escape
+                  }}
+
+                {%- elsif media.media_type == 'model' -%}
+                  {{
+                    media.preview_image
+                    | image_url: width: 160
+                    | image_tag: loading: 'lazy', decoding: 'async', alt: media.alt
+                    | escape
+                  }}
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} ── MAIN SLIDER ─────────────────────────────── {%- endcomment -%}
+  <div class="pmg-main-col">
+    <div
+      id="pmg-main-{{ section.id }}"
+      class="splide pmg-main"
+      aria-label="{{ product.title | escape }} — media gallery"
+    >
+      <div class="splide__track">
+        <ul class="splide__list">
+          {%- for media in product.media -%}
+            <li class="splide__slide pmg-main-slide" data-media-type="{{ media.media_type }}">
+              {%- if media.media_type == 'image' -%}
+                {% if forloop.first %}
+                  {{
+                    media
+                    | image_url: width: 900
+                    | image_tag:
+                      class: 'pmg-main-img',
+                      loading: 'eager',
+                      fetchpriority: 'high',
+                      decoding: 'async',
+                      widths: '400, 600, 800, 900',
+                      sizes: '(max-width: 767px) 100vw, 595px',
+                      alt: media.alt
+                  }}
+                {% else %}
+                  {{
+                    media
+                    | image_url: width: 900
+                    | image_tag:
+                      class: 'pmg-main-img',
+                      loading: 'lazy',
+                      fetchpriority: 'low',
+                      decoding: 'async',
+                      widths: '400, 600, 800, 900',
+                      sizes: '(max-width: 767px) 100vw, 595px',
+                      alt: media.alt
+                  }}
+                {% endif %}
+              {%- elsif media.media_type == 'video' -%}
+                {%- assign video = media -%}
+                <video
+                  class="pmg-main-video"
+                  playsinline
+                  muted
+                  loop
+                  preload="none"
+                  poster="{{ video.preview_image | image_url: width: 1200 }}"
+                >
+                  {%- for source in video.sources -%}
+                    {%- if source.mime_type == 'video/mp4' -%}
+                      <source src="{{ source.url }}" type="video/mp4">
+                    {%- endif -%}
+                  {%- endfor -%}
+                </video>
+
+              {%- elsif media.media_type == 'external_video' -%}
+                {%- comment -%}
+                  External video (YouTube / Vimeo) — loaded as lite embed
+                  to avoid third-party JS blocking LCP/TBT.
+                  Uses preview image with play button overlay.
+                {%- endcomment -%}
+                <div
+                  class="pmg-ext-video"
+                  data-video-id="{{ media.external_id }}"
+                  data-video-host="{{ media.host }}"
+                  style="position:relative;width:100%;height:100%;background:#000;"
+                >
+                  {{
+                    media.preview_image
+                    | image_url: width: 1200
+                    | image_tag:
+                      class: 'pmg-main-img',
+                      loading: 'lazy',
+                      decoding: 'async',
+                      widths: '600, 900, 1200',
+                      sizes: '(max-width: 767px) 100vw, 55vw',
+                      alt: media.alt
+                    | escape
+                  }}
+                  <button
+                    class="pmg-play-btn"
+                    aria-label="Play video"
+                    style="position:absolute;inset:0;margin:auto;width:64px;height:64px;border-radius:50%;background:rgba(0,0,0,.55);border:2px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;"
+                  >
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+                      <polygon points="5,3 19,12 5,21"/>
+                    </svg>
+                  </button>
+                </div>
+
+              {%- elsif media.media_type == 'model' -%}
+                <product-model
+                  data-model-id="{{ media.id }}"
+                  style="display:block;width:100%;height:100%;"
+                >
+                  {{
+                    media.preview_image
+                    | image_url: width: 1200
+                    | image_tag: class: 'pmg-main-img', loading: 'lazy', decoding: 'async', alt: media.alt
+                    | escape
+                  }}
+                </product-model>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var sectionId  = '{{ section.id }}';
+    var thumbW     = {{ thumb_width }};
+    var thumbGap   = {{ thumb_gap }};
+    var thumbCount = {{ thumb_count }};
+
+    /* Compute the exact pixel height for the vertical thumbnail column:
+       (thumb height = thumb width * 4/3 for 3:4 ratio) + gaps between items */
+    var thumbH     = Math.round(thumbW * (4 / 3)); /* each thumb height */
+    var colHeight  = (thumbH * thumbCount) + (thumbGap * (thumbCount - 1));
+
+    function initGallery() {
+      var mainEl   = document.getElementById('pmg-main-' + sectionId);
+      var thumbsEl = document.getElementById('pmg-thumbs-' + sectionId);
+
+      if (!mainEl) return;
+
+      /* ── Main slider ────────────────────────────────────────── */
+      var main = new Splide(mainEl, {
+        type      : 'fade',
+        rewind    : true,
+        pagination: false,
+        arrows    : false,
+        drag      : true,
+        speed     : 450,
+        easing    : 'ease',
+        autoHeight: false,
+      });
+
+      /* ── Thumbnail slider ───────────────────────────────────── */
+      if (thumbsEl) {
+        var isMobile = window.innerWidth <= 767;
+
+        var thumbs = new Splide(thumbsEl, {
+          rewind      : false,
+          pagination  : false,
+          arrows      : false,
+          isNavigation: true,
+          drag        : true,
+          speed       : 300,
+          gap         : thumbGap,
+          /* ── DESKTOP: vertical column ── */
+          direction   : isMobile ? 'ltr' : 'ttb',
+          fixedWidth  : isMobile ? thumbW : undefined,
+          fixedHeight : isMobile ? undefined : thumbH,
+          height      : isMobile ? 'auto' : colHeight + 'px',
+          perPage     : isMobile ? 3 : thumbCount,
+          perMove     : 1,
+          focus       : 0,
+          trimSpace   : 'move',
+          breakpoints : {
+            767: {
+              direction  : 'ltr',
+              height     : 'auto',
+              fixedWidth : thumbW,
+              fixedHeight: undefined,
+              perPage    : 3,
+            }
+          }
+        });
+
+        /*
+          CRITICAL ORDER:
+          1. sync() — register the relationship
+          2. mount both together via main.sync().mount() pattern
+             OR mount thumbs first then main.
+          Correct pattern for Splide v4:
+          - Call main.sync(thumbs) BEFORE either .mount()
+          - Then mount thumbs, then mount main
+        */
+        main.sync(thumbs);
+
+        /* Mount thumbs first (nav slider must be ready before main) */
+        thumbs.mount();
+
+        /* Now mount main */
+        main.mount();
+
+        /* Keep thumbnail column height in sync on resize */
+        window.addEventListener('resize', function () {
+          var nowMobile = window.innerWidth <= 767;
+          if (nowMobile !== isMobile) {
+            /* Full re-init on breakpoint cross to switch direction */
+            location.reload();
+          }
+        }, { passive: true });
+
+      } else {
+        /* No thumbnails — just mount main */
+        main.mount();
+      }
+
+      /* ── Auto-play video when slide becomes active ────────── */
+      main.on('active', function (slide) {
+        mainEl.querySelectorAll('.pmg-main-video').forEach(function (v) {
+          v.pause();
+        });
+        var activeVideo = slide.slide.querySelector('.pmg-main-video');
+        if (activeVideo) {
+          activeVideo.play().catch(function () {});
+        }
+      });
+
+      /* ── External video lazy embed ─────────────────────────── */
+      mainEl.querySelectorAll('.pmg-play-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var container = btn.closest('.pmg-ext-video');
+          var videoId   = container.dataset.videoId;
+          var host      = container.dataset.videoHost;
+          var iframe    = document.createElement('iframe');
+          var src       = host === 'youtube'
+            ? 'https://www.youtube.com/embed/' + videoId + '?autoplay=1&rel=0'
+            : 'https://player.vimeo.com/video/' + videoId + '?autoplay=1';
+          iframe.src             = src;
+          iframe.allow           = 'autoplay; fullscreen';
+          iframe.allowFullscreen = true;
+          iframe.style.cssText   = 'position:absolute;inset:0;width:100%;height:100%;border:0;';
+          container.innerHTML    = '';
+          container.appendChild(iframe);
+        });
+      });
+
+      /* ── ZOOM (CSS transform — zero layout shift) ─────────── */
+      {% if enable_zoom %}
+      mainEl.querySelectorAll('.pmg-main-slide').forEach(function (slide) {
+        if (slide.dataset.mediaType !== 'image') return;
+
+        var isZoomed = false;
+
+        slide.addEventListener('mousemove', function (e) {
+          if (!isZoomed) return;
+          var rect = slide.getBoundingClientRect();
+          var x = ((e.clientX - rect.left) / rect.width  * 100).toFixed(1) + '%';
+          var y = ((e.clientY - rect.top)  / rect.height * 100).toFixed(1) + '%';
+          slide.style.setProperty('--pmg-zoom-origin-x', x);
+          slide.style.setProperty('--pmg-zoom-origin-y', y);
+        });
+
+        slide.addEventListener('click', function () {
+          isZoomed = !isZoomed;
+          slide.classList.toggle('is-zoomed', isZoomed);
+          if (!isZoomed) {
+            slide.style.setProperty('--pmg-zoom-origin-x', '50%');
+            slide.style.setProperty('--pmg-zoom-origin-y', '50%');
+          }
+        });
+
+        /* Reset zoom on slide change */
+        main.on('move', function () {
+          isZoomed = false;
+          slide.classList.remove('is-zoomed');
+          slide.style.setProperty('--pmg-zoom-origin-x', '50%');
+          slide.style.setProperty('--pmg-zoom-origin-y', '50%');
+        });
+      });
+      {% endif %}
+    }
+
+    /* ── Boot: wait for Splide to be available ──────────────── */
+    function tryInit() {
+      if (typeof Splide !== 'undefined') {
+        initGallery();
+      } else {
+        /* Splide is deferred — listen for its script load */
+        var splideScript = document.querySelector('script[src*="splide.min.js"]');
+        if (splideScript) {
+          splideScript.addEventListener('load', initGallery);
+        } else {
+          /* Fallback: poll until available (max 3s) */
+          var attempts = 0;
+          var poll = setInterval(function () {
+            attempts++;
+            if (typeof Splide !== 'undefined') {
+              clearInterval(poll);
+              initGallery();
+            } else if (attempts > 30) {
+              clearInterval(poll);
+              console.warn('[PMG] Splide not found after 3s');
+            }
+          }, 100);
+        }
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', tryInit);
+    } else {
+      tryInit();
+    }
+  })();
+</script>

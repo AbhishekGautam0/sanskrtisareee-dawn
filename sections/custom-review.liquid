@@ -1,0 +1,235 @@
+{% schema %}
+{
+  "name": "Customer Reviews Slider",
+  "settings": [
+    {
+      "type": "text",
+      "id": "main_heading",
+      "label": "Main Heading",
+      "default": "Voices of Grace"
+    },
+    {
+      "type": "text",
+      "id": "rating_text",
+      "label": "Rating Text",
+      "default": "4.9 out of 5 based on 150 reviews"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#fdfaf5"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#333333"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review Block",
+      "settings": [
+        {
+          "type": "text",
+          "id": "reviewer_name",
+          "label": "Reviewer Name",
+          "default": "Ananya R."
+        },
+        {
+          "type": "text",
+          "id": "reviewer_status",
+          "label": "Reviewer Status",
+          "default": "Verified Purchase"
+        },
+        {
+          "type": "textarea",
+          "id": "review_text",
+          "label": "Review Text",
+          "default": "The drape is absolutely divine. Wore it for my daughter's wedding and received endless compliments."
+        },
+        {
+          "type": "image_picker",
+          "id": "review_image",
+          "label": "Review Image"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 10,
+  "presets": [
+    {
+      "name": "Customer Reviews Slider",
+      "settings": {
+        "main_heading": "Voices of Grace",
+        "rating_text": "4.9 out of 5 based on 150 reviews"
+      },
+      "blocks": [
+        {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Ananya R.",
+            "reviewer_status": "Verified Purchase",
+            "review_text": "The drape is absolutely divine. Wore it for my daughter's wedding and received endless compliments."
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Meera K.",
+            "reviewer_status": "Verified Purchase",
+            "review_text": "I've bought several Banarasi sarees, but the craftsmanship of SanskritiSaree is exceptional."
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Sunita V.",
+            "reviewer_status": "Verified Purchase",
+            "review_text": "Packaged beautifully with a personalized note. It felt like receiving a piece of art."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<section style="background-color: {{ section.settings.background_color }}; color: {{ section.settings.text_color }};" class="reviews-slider">
+<div class="page-width">
+  <div class="reviews-header">
+    <h2>{{ section.settings.main_heading }}</h2>
+    <div class="rating">
+      <span class="stars">★★★★★</span>
+      <span class="rating-textt">{{ section.settings.rating_text }}</span>
+    </div>
+  </div>
+
+  <div class="splide" id="reviewsSplide">
+    <div class="splide__track">
+      <ul class="splide__list">
+        {% for block in section.blocks %}
+          <li class="splide__slide review-item">
+            <div class="review-content">
+              <h3>{{ block.settings.reviewer_name }}</h3>
+              <span class="status">{{ block.settings.reviewer_status }}</span>
+              <p>{{ block.settings.review_text }}</p>
+              {% if block.settings.review_image != blank %}
+                <img src="{{ block.settings.review_image | image_url: width: 400 }}" alt="{{ block.settings.reviewer_name }}" class="review-image">
+              {% endif %}
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  </div>
+</section>
+
+<style>
+.reviews-slider {
+  padding: 50px 20px;
+}
+.reviews-header {
+  text-align: left;
+  margin-bottom: 30px;
+}
+.reviews-header h2 {
+  font-size: 38px;
+  font-weight: 500;
+}
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.rating .stars {
+  color: #FFD700;
+  font-size: 26px;
+}
+.rating .rating-textt {
+  font-size: 18px;
+  color: #666;
+}
+.review-item {
+  text-align: center;
+  padding: 20px;
+  background: #f5f0e8;
+  border-radius: 12px;
+}
+.review-content h3 {
+  font-size: 20px;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+.review-content .status {
+  font-size: 10px;
+  color: #888;
+  display: block;
+  margin-bottom: 10px;
+}
+.review-content p {
+  font-size: 15px;
+  margin-bottom: 15px;
+}
+.review-image {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+  border-radius: 8px;
+  max-height: 220px;
+  object-fit: cover;
+  width: 100%;
+}
+
+@media(max-width: 650px) {
+  .rating .stars {
+    font-size: 20px;
+  }
+  .rating .rating-textt {
+    font-size: 15px;
+  }
+  .reviews-header h2 {
+    font-size: 30px;
+    font-weight: 500;
+  }
+  .review-content p{
+    font-size: 14px;
+    line-height: normal;
+  }
+  .review-item {
+    padding: 15px;
+  }
+}
+</style>
+
+<script>
+document.addEventListener( 'DOMContentLoaded', function () {
+  new Splide( '#reviewsSplide', {
+    type      : 'loop',
+    perPage   : 3,
+    autoplay  : true,
+    interval  : 5000,
+    pagination: true,
+    arrows    : true,
+    gap       : '30px', // space between slides
+    breakpoints: {
+      1024: {
+        perPage: 2,
+        gap: '20px',
+      },
+      768: {
+        perPage: 2,
+        gap: '15px',
+      },
+      480: {
+        perPage: 1,
+        gap: '10px',
+        arrows: false, // hide arrows on very small screens
+      }
+    }
+  } ).mount();
+} );
+</script>

@@ -1,0 +1,1675 @@
+
+{%- liquid
+  assign heading_font = section.settings.heading_font
+  assign body_font    = section.settings.body_font
+-%}
+
+
+<style>
+/* ============================================================
+   CSS VARIABLES
+   ============================================================ */
+#shopify-section-{{ section.id }} {
+  --cf-bg:              {{ section.settings.section_bg }};
+  --cf-accent:          {{ section.settings.accent_color }};
+  --cf-heading:         {{ section.settings.heading_color }};
+  --cf-body:            {{ section.settings.body_color }};
+  --cf-label:           {{ section.settings.label_color }};
+  --cf-input-bg:        {{ section.settings.input_bg }};
+  --cf-input-border:    {{ section.settings.input_border }};
+  --cf-input-focus:     {{ section.settings.input_focus_color }};
+  --cf-input-text:      {{ section.settings.input_text_color }};
+  --cf-btn-bg:          {{ section.settings.btn_bg }};
+  --cf-btn-text:        {{ section.settings.btn_text }};
+  --cf-btn-hover-bg:    {{ section.settings.btn_hover_bg }};
+  --cf-btn-hover-text:  {{ section.settings.btn_hover_text }};
+  --cf-img-frame:       {{ section.settings.image_frame_color }};
+  --cf-detail-bg:       {{ section.settings.detail_bg }};
+  --cf-detail-icon:     {{ section.settings.detail_icon_color }};
+  --cf-detail-title:    {{ section.settings.detail_title_color }};
+  --cf-detail-text:     {{ section.settings.detail_text_color }};
+  --cf-detail-border:   {{ section.settings.detail_border_color }};
+  --cf-divider:         {{ section.settings.divider_color }};
+}
+
+/* ============================================================
+   SECTION WRAPPER
+   ============================================================ */
+.cf-section {
+  background: var(--cf-bg);
+  padding: {{ section.settings.section_pad_v }}px {{ section.settings.section_pad_h }}px;
+}
+
+.cf-inner {
+  max-width: {{ section.settings.max_width }}px;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   SECTION HEADER (optional)
+   ============================================================ */
+.cf-section-header {
+  margin-bottom: {{ section.settings.header_mb }}px;
+  {% case section.settings.header_align %}
+    {% when 'center' %} text-align: center;
+    {% when 'right'  %} text-align: right;
+    {% else %}          text-align: left;
+  {% endcase %}
+}
+
+.cf-eyebrow {
+  font-family: {{ body_font.family }}, sans-serif;
+  font-size: {{ section.settings.eyebrow_size }}px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cf-accent);
+  margin: 0 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cf-eyebrow::before,
+.cf-eyebrow::after {
+  content: '';
+  display: {% if section.settings.header_align == 'center' %}block{% else %}none{% endif %};
+  width: 28px;
+  height: 1px;
+  background: var(--cf-accent);
+}
+
+.cf-section-heading {
+  font-family: {{ heading_font.family }}, serif;
+  font-size: {{ section.settings.section_heading_size }}px;
+  font-weight: {{ section.settings.heading_weight }};
+  color: var(--cf-heading);
+  margin: 0 0 12px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.cf-section-sub {
+  font-family: {{ body_font.family }}, sans-serif;
+  font-size: {{ section.settings.section_sub_size }}px;
+  color: var(--cf-body);
+  margin: 0;
+  line-height: 1.65;
+  max-width: 540px;
+  {% if section.settings.header_align == 'center' %} margin: 0 auto; {% endif %}
+}
+
+/* ============================================================
+   MAIN GRID — Form (left) + Image (right)
+   ============================================================ */
+.cf-grid {
+  display: grid;
+  grid-template-columns: {{ section.settings.form_col_width }}fr {{ section.settings.image_col_width }}fr;
+  gap: {{ section.settings.grid_gap }}px;
+  align-items: stretch;
+  margin-bottom: {{ section.settings.grid_mb }}px;
+}
+
+/* ============================================================
+   LEFT — FORM PANEL
+   ============================================================ */
+.cf-form-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.cf-form-title {
+  font-family: {{ heading_font.family }}, serif;
+  font-size: {{ section.settings.form_title_size }}px;
+  font-weight: {{ section.settings.heading_weight }};
+  color: var(--cf-heading);
+  margin: 0 0 6px;
+  line-height: 1.15;
+}
+
+.cf-form-desc {
+  font-family: {{ body_font.family }}, sans-serif;
+  font-size: {{ section.settings.body_size }}px;
+  color: var(--cf-body);
+  margin: 0 0 {{ section.settings.form_desc_mb }}px;
+  line-height: 1.6;
+}
+
+/* Form fields */
+.cf-form {
+  display: flex;
+  flex-direction: column;
+  gap: {{ section.settings.field_gap }}px;
+}
+
+.cf-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: {{ section.settings.field_gap }}px;
+}
+
+.cf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cf-label {
+  font-family: {{ body_font.family }}, sans-serif;
+  font-size: {{ section.settings.label_size }}px;
+  font-weight: 500;
+  color: var(--cf-label);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.cf-input,
+.cf-textarea,
+.cf-select {
+  font-family: {{ body_font.family }}, sans-serif;
+  font-size: {{ section.settings.input_font_size }}px;
+  color: var(--cf-input-text);
+  background: var(--cf-input-bg);
+  border: 1px solid var(--cf-input-border);
+  border-radius: {{ section.settings.input_radius }}px;
+  padding: {{ section.settings.input_pad_v }}px {{ section.settings.input_pad_h }}px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+}
+
+.cf-input::placeholder,
+.cf-textarea::placeholder {
+  color: {{ section.settings.placeholder_color }};
+}
+
+.cf-input:focus,
+.cf-textarea:focus,
+.cf-select:focus {
+  border-color: var(--cf-input-focus);
+  box-shadow: 0 0 0 3px {{ section.settings.input_focus_color }}22;
+}
+
+.cf-textarea {
+  resize: vertical;
+  min-height: {{ section.settings.textarea_height }}px;
+  line-height: 1.6;
+}
+
+/* Submit button */
+.cf-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: {{ body_font.family }}, sans-serif;
+  font-size: {{ section.settings.btn_font_size }}px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cf-btn-text);
+  background: var(--cf-btn-bg);
+  border: 1.5px solid var(--cf-btn-bg);
+  border-radius: {{ section.settings.btn_radius }}px;
+  padding: {{ section.settings.btn_pad_v }}px {{ section.settings.btn_pad_h }}px;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s, transform 0.2s;
+  align-self: {{ section.settings.btn_align }};
+  width: {% if section.settings.btn_full_width %}100{% else %}auto{% endif %}%;
+}
+
+.cf-submit:hover {
+  background: var(--cf-btn-hover-bg);
+  border-color: var(--cf-btn-hover-bg);
+  color: var(--cf-btn-hover-text);
+  transform: translateY(-2px);
+}
+
+.cf-submit svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+/* Success / Error messages */
+.cf-success {
+  background: #f0faf4;
+  border: 1px solid #4caf7d;
+  border-radius: {{ section.settings.input_radius }}px;
+  padding: 14px 18px;
+  font-family: {{ body_font.family }}, sans-serif;
+  font-size: {{ section.settings.body_size }}px;
+  color: #2d6a4f;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cf-errors {
+  background: #fff5f5;
+  border: 1px solid #e57373;
+  border-radius: {{ section.settings.input_radius }}px;
+  padding: 14px 18px;
+  font-family: {{ body_font.family }}, sans-serif;
+  font-size: {{ section.settings.body_size }}px;
+  color: #b71c1c;
+}
+
+/* ============================================================
+   RIGHT — IMAGE PANEL
+   ============================================================ */
+.cf-image-panel {
+  position: relative;
+  border-radius: {{ section.settings.image_radius }}px;
+  overflow: hidden;
+  min-height: 480px;
+}
+
+/* Decorative gold frame offset */
+.cf-image-panel::before {
+  content: '';
+  position: absolute;
+  inset: {{ section.settings.frame_offset }}px;
+  border: 1.5px solid var(--cf-img-frame);
+  border-radius: {{ section.settings.image_radius | minus: 4 }}px;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.6;
+  {% unless section.settings.show_image_frame %}display: none;{% endunless %}
+}
+
+.cf-image-panel__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: {{ section.settings.image_position }};
+  display: block;
+  border-radius: {{ section.settings.image_radius }}px;
+}
+
+/* Gradient overlay on image */
+.cf-image-panel__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.55) 0%,
+    rgba(0,0,0,0.1) 45%,
+    transparent 100%
+  );
+  border-radius: {{ section.settings.image_radius }}px;
+  z-index: 2;
+  {% unless section.settings.show_image_overlay %}display: none;{% endunless %}
+}
+
+/* Image caption text */
+.cf-image-panel__caption {
+  position: absolute;
+  bottom: 28px;
+  left: 28px;
+  right: 28px;
+  z-index: 4;
+  {% unless section.settings.show_image_caption %}display: none;{% endunless %}
+}
+
+.cf-image-panel__caption-eyebrow {
+  font-family: {{ body_font.family }}, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cf-accent);
+  margin: 0 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cf-image-panel__caption-eyebrow::before {
+  content: '';
+  width: 20px;
+  height: 1px;
+  background: var(--cf-accent);
+}
+
+.cf-image-panel__caption-text {
+  font-family: {{ heading_font.family }}, serif;
+  font-size: {{ section.settings.caption_size }}px;
+  font-weight: 400;
+  color: #f8f4ec;
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+/* Placeholder when no image selected */
+.cf-image-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 480px;
+  background: linear-gradient(145deg, #f5ede0 0%, #e8d5b7 50%, #d4b896 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  border-radius: {{ section.settings.image_radius }}px;
+}
+
+.cf-image-placeholder svg {
+  width: 64px;
+  height: 64px;
+  stroke: #c9a96e;
+  fill: none;
+  stroke-width: 1;
+  opacity: 0.6;
+}
+
+.cf-image-placeholder p {
+  font-family: {{ body_font.family }}, sans-serif;
+  font-size: 13px;
+  color: #a08060;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* ============================================================
+   DIVIDER
+   ============================================================ */
+.cf-divider {
+  height: 1px;
+  background: var(--cf-divider);
+  margin: 0 0 {{ section.settings.details_gap }}px;
+  {% unless section.settings.show_divider %}display: none;{% endunless %}
+}
+
+/* ============================================================
+   BOTTOM — CONTACT DETAILS ROW
+   ============================================================ */
+.cf-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: {{ section.settings.detail_item_gap }}px;
+}
+
+.cf-detail-card {
+  background: var(--cf-detail-bg);
+  border: 1px solid var(--cf-detail-border);
+  border-radius: {{ section.settings.detail_radius }}px;
+  padding: {{ section.settings.detail_pad_v }}px {{ section.settings.detail_pad_h }}px;
+  display: flex;
+  align-items: flex-start;
+  gap: {{ section.settings.detail_icon_gap }}px;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.cf-detail-card:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.07);
+  transform: translateY(-3px);
+}
+
+.cf-detail-icon {
+  flex-shrink: 0;
+  width: {{ section.settings.detail_icon_size }}px;
+  height: {{ section.settings.detail_icon_size }}px;
+  background: {{ section.settings.detail_icon_bg }};
+  border-radius: {{ section.settings.detail_icon_radius }}px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cf-detail-icon svg {
+  width: {{ section.settings.detail_icon_size | times: 0.5 | round }}px;
+  height: {{ section.settings.detail_icon_size | times: 0.5 | round }}px;
+  stroke: var(--cf-detail-icon);
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cf-detail-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cf-detail-label {
+  font-family: {{ body_font.family }}, sans-serif;
+  font-size: {{ section.settings.detail_label_size }}px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cf-detail-title);
+  margin: 0;
+  line-height: 1;
+}
+
+.cf-detail-value {
+  font-family: {{ body_font.family }}, sans-serif;
+  font-size: {{ section.settings.detail_value_size }}px;
+  color: var(--cf-detail-text);
+  margin: 0;
+  line-height: 1.55;
+}
+
+.cf-detail-value a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.cf-detail-value a:hover {
+  color: var(--cf-accent);
+}
+
+/* ============================================================
+   MOBILE RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  .cf-grid {
+    grid-template-columns: 1fr;
+    gap: {{ section.settings.grid_gap | times: 0.7 | round }}px;
+  }
+
+  .cf-image-panel {
+    min-height: {{ section.settings.image_mobile_height }}px;
+    order: {% if section.settings.mobile_image_first %}'-1'{% else %}'1'{% endif %};
+  }
+
+  .cf-image-panel__img {
+    height: {{ section.settings.image_mobile_height }}px;
+  }
+
+  .cf-image-placeholder {
+    min-height: {{ section.settings.image_mobile_height }}px;
+  }
+}
+
+@media (max-width: 600px) {
+  .cf-section {
+    padding: {{ section.settings.section_pad_v | times: 0.7 | round }}px {{ section.settings.mobile_pad_h }}px;
+  }
+
+  .cf-row {
+    grid-template-columns: 1fr;
+  }
+
+  .cf-section-heading {
+    font-size: {{ section.settings.section_heading_size | times: 0.7 | round }}px;
+  }
+
+  .cf-form-title {
+    font-size: {{ section.settings.form_title_size | times: 0.8 | round }}px;
+  }
+
+  .cf-submit {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .cf-details {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+<section class="cf-section" id="shopify-section-{{ section.id }}-wrap">
+  <div class="cf-inner">
+
+    {%- comment -%} ── Optional Section Header ──────────────────── {%- endcomment -%}
+    {%- if section.settings.show_section_header -%}
+      <div class="cf-section-header">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="cf-eyebrow">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        {%- if section.settings.section_heading != blank -%}
+          <h1 class="cf-section-heading">{{ section.settings.section_heading }}</h1>
+        {%- endif -%}
+        {%- if section.settings.section_sub != blank -%}
+          <p class="cf-section-sub">{{ section.settings.section_sub }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} ── MAIN GRID: Form + Image ──────────────────── {%- endcomment -%}
+    <div class="cf-grid">
+
+      {%- comment -%} LEFT: Contact Form {%- endcomment -%}
+      <div class="cf-form-panel">
+
+        {%- if section.settings.form_title != blank -%}
+          <h2 class="cf-form-title">{{ section.settings.form_title }}</h2>
+        {%- endif -%}
+        {%- if section.settings.form_desc != blank -%}
+          <p class="cf-form-desc">{{ section.settings.form_desc }}</p>
+        {%- endif -%}
+
+        {%- form 'contact', id: 'cf-form-{{ section.id }}', class: 'cf-form' -%}
+
+          {%- if form.posted_successfully? -%}
+            <div class="cf-success">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2d6a4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/>
+              </svg>
+              {{ 'contact.form.post_success' | t }}
+            </div>
+
+          {%- elsif form.errors -%}
+            <div class="cf-errors">
+              {{ form.errors | default_errors }}
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} Name row {%- endcomment -%}
+          <div class="cf-row">
+            <div class="cf-field">
+              <label class="cf-label" for="cf-fname-{{ section.id }}">{{ section.settings.label_first_name }}</label>
+              <input
+                class="cf-input"
+                type="text"
+                id="cf-fname-{{ section.id }}"
+                name="contact[{{ section.settings.label_first_name }}]"
+                placeholder="{{ section.settings.placeholder_first_name }}"
+                autocomplete="given-name"
+              >
+            </div>
+            <div class="cf-field">
+              <label class="cf-label" for="cf-lname-{{ section.id }}">{{ section.settings.label_last_name }}</label>
+              <input
+                class="cf-input"
+                type="text"
+                id="cf-lname-{{ section.id }}"
+                name="contact[{{ section.settings.label_last_name }}]"
+                placeholder="{{ section.settings.placeholder_last_name }}"
+                autocomplete="family-name"
+              >
+            </div>
+          </div>
+
+          {%- comment -%} Email + Phone row {%- endcomment -%}
+          <div class="cf-row">
+            <div class="cf-field">
+              <label class="cf-label" for="cf-email-{{ section.id }}">{{ section.settings.label_email }} <span style="color:var(--cf-accent)">*</span></label>
+              <input
+                class="cf-input"
+                type="email"
+                id="cf-email-{{ section.id }}"
+                name="contact[email]"
+                placeholder="{{ section.settings.placeholder_email }}"
+                autocomplete="email"
+                required
+              >
+            </div>
+            {%- if section.settings.show_phone_field -%}
+            <div class="cf-field">
+              <label class="cf-label" for="cf-phone-{{ section.id }}">{{ section.settings.label_phone }}</label>
+              <input
+                class="cf-input"
+                type="tel"
+                id="cf-phone-{{ section.id }}"
+                name="contact[{{ section.settings.label_phone }}]"
+                placeholder="{{ section.settings.placeholder_phone }}"
+                autocomplete="tel"
+              >
+            </div>
+            {%- endif -%}
+          </div>
+
+          {%- comment -%} Subject {%- endcomment -%}
+          {%- if section.settings.show_subject_field -%}
+          <div class="cf-field">
+            <label class="cf-label" for="cf-subject-{{ section.id }}">{{ section.settings.label_subject }}</label>
+            <input
+              class="cf-input"
+              type="text"
+              id="cf-subject-{{ section.id }}"
+              name="contact[{{ section.settings.label_subject }}]"
+              placeholder="{{ section.settings.placeholder_subject }}"
+            >
+          </div>
+          {%- endif -%}
+
+          {%- comment -%} Message {%- endcomment -%}
+          <div class="cf-field">
+            <label class="cf-label" for="cf-message-{{ section.id }}">{{ section.settings.label_message }} <span style="color:var(--cf-accent)">*</span></label>
+            <textarea
+              class="cf-textarea"
+              id="cf-message-{{ section.id }}"
+              name="contact[body]"
+              placeholder="{{ section.settings.placeholder_message }}"
+              required
+            ></textarea>
+          </div>
+
+          {%- comment -%} Submit {%- endcomment -%}
+          <button type="submit" class="cf-submit">
+            {{ section.settings.btn_label }}
+            <svg viewBox="0 0 24 24">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
+
+        {%- endform -%}
+      </div>
+
+      {%- comment -%} RIGHT: Saree Image Panel {%- endcomment -%}
+      <div class="cf-image-panel">
+        {%- if section.settings.panel_image != blank -%}
+          {{
+            section.settings.panel_image
+            | image_url: width: 900
+            | image_tag:
+              class: 'cf-image-panel__img',
+              loading: 'lazy',
+              widths: '400, 600, 900',
+              sizes: '(max-width: 900px) 100vw, 50vw',
+              alt: section.settings.panel_image.alt | default: section.settings.image_caption_text | escape
+          }}
+          <div class="cf-image-panel__overlay"></div>
+          <div class="cf-image-panel__caption">
+            {%- if section.settings.image_caption_eyebrow != blank -%}
+              <p class="cf-image-panel__caption-eyebrow">{{ section.settings.image_caption_eyebrow }}</p>
+            {%- endif -%}
+            {%- if section.settings.image_caption_text != blank -%}
+              <p class="cf-image-panel__caption-text">{{ section.settings.image_caption_text }}</p>
+            {%- endif -%}
+          </div>
+        {%- else -%}
+          <div class="cf-image-placeholder">
+            <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="4" width="56" height="56" rx="4"/>
+              <path d="M4 44l14-14 10 10 12-16 20 20"/>
+              <circle cx="20" cy="20" r="6"/>
+            </svg>
+            <p>Add your saree image</p>
+          </div>
+        {%- endif -%}
+      </div>
+
+    </div>
+    {%- comment -%} end .cf-grid {%- endcomment -%}
+
+    {%- comment -%} ── DIVIDER ──────────────────────────────────── {%- endcomment -%}
+    <div class="cf-divider"></div>
+
+    {%- comment -%} ── CONTACT DETAIL BLOCKS ────────────────────── {%- endcomment -%}
+    <div class="cf-details">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'contact_detail' -%}
+          <div class="cf-detail-card" {{ block.shopify_attributes }}>
+
+            <div class="cf-detail-icon">
+              {%- case block.settings.icon -%}
+                {%- when 'address' -%}
+                  <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                {%- when 'email' -%}
+                  <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                {%- when 'phone' -%}
+                  <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.36 2 2 0 0 1 3.6 1.14h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.69a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                {%- when 'whatsapp' -%}
+                  <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                {%- when 'clock' -%}
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+                {%- when 'instagram' -%}
+                  <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+              {%- endcase -%}
+            </div>
+
+            <div class="cf-detail-body">
+              {%- if block.settings.label != blank -%}
+                <p class="cf-detail-label">{{ block.settings.label }}</p>
+              {%- endif -%}
+              {%- if block.settings.value != blank -%}
+                <p class="cf-detail-value">
+                  {%- if block.settings.link != blank -%}
+                    <a href="{{ block.settings.link }}">{{ block.settings.value }}</a>
+                  {%- else -%}
+                    {{ block.settings.value }}
+                  {%- endif -%}
+                </p>
+              {%- endif -%}
+            </div>
+
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Contact Section",
+  "tag": "section",
+  "class": "section-contact-premium",
+  "max_blocks": 6,
+  "settings": [
+
+    {
+      "type": "header",
+      "content": "📋 Section Header"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_section_header",
+      "label": "Show Section Header",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "header_align",
+      "label": "Header Alignment",
+      "options": [
+        { "value": "left",   "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right",  "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Label",
+      "default": "Get In Touch"
+    },
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Section Heading",
+      "default": "We'd Love to Hear From You"
+    },
+    {
+      "type": "textarea",
+      "id": "section_sub",
+      "label": "Section Subheading",
+      "default": "Whether you have a question about a saree, a custom order, or simply want to know more — we're here."
+    },
+    {
+      "type": "range",
+      "id": "section_heading_size",
+      "min": 24,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "label": "Section Heading Size",
+      "default": 46
+    },
+    {
+      "type": "range",
+      "id": "section_sub_size",
+      "min": 13,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Section Subheading Size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "min": 9,
+      "max": 14,
+      "step": 1,
+      "unit": "px",
+      "label": "Eyebrow Size",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "header_mb",
+      "min": 24,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Header Bottom Margin",
+      "default": 52
+    },
+
+    {
+      "type": "header",
+      "content": "📝 Form Content"
+    },
+    {
+      "type": "text",
+      "id": "form_title",
+      "label": "Form Title",
+      "default": "Send Us a Message"
+    },
+    {
+      "type": "textarea",
+      "id": "form_desc",
+      "label": "Form Description",
+      "default": "Fill in the form and our team will get back to you within 24 hours."
+    },
+    {
+      "type": "range",
+      "id": "form_title_size",
+      "min": 18,
+      "max": 42,
+      "step": 2,
+      "unit": "px",
+      "label": "Form Title Size",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "form_desc_mb",
+      "min": 12,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Form Description Bottom Margin",
+      "default": 28
+    },
+
+    {
+      "type": "header",
+      "content": "🔡 Field Labels & Placeholders"
+    },
+    {
+      "type": "text",
+      "id": "label_first_name",
+      "label": "First Name Label",
+      "default": "First Name"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_first_name",
+      "label": "First Name Placeholder",
+      "default": "Priya"
+    },
+    {
+      "type": "text",
+      "id": "label_last_name",
+      "label": "Last Name Label",
+      "default": "Last Name"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_last_name",
+      "label": "Last Name Placeholder",
+      "default": "Sharma"
+    },
+    {
+      "type": "text",
+      "id": "label_email",
+      "label": "Email Label",
+      "default": "Email Address"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_email",
+      "label": "Email Placeholder",
+      "default": "priya@example.com"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone_field",
+      "label": "Show Phone Field",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "label_phone",
+      "label": "Phone Label",
+      "default": "Phone Number"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_phone",
+      "label": "Phone Placeholder",
+      "default": "+91 98765 43210"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_subject_field",
+      "label": "Show Subject Field",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "label_subject",
+      "label": "Subject Label",
+      "default": "Subject"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_subject",
+      "label": "Subject Placeholder",
+      "default": "Custom order inquiry..."
+    },
+    {
+      "type": "text",
+      "id": "label_message",
+      "label": "Message Label",
+      "default": "Message"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_message",
+      "label": "Message Placeholder",
+      "default": "Tell us about your dream saree or any questions you have..."
+    },
+    {
+      "type": "text",
+      "id": "btn_label",
+      "label": "Submit Button Label",
+      "default": "Send Message"
+    },
+
+    {
+      "type": "header",
+      "content": "🖼 Right Image Panel"
+    },
+    {
+      "type": "image_picker",
+      "id": "panel_image",
+      "label": "Saree Image",
+      "info": "Recommended: portrait orientation, min 600×900px"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image Focus Position",
+      "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "top center",    "label": "Top" },
+        { "value": "bottom center", "label": "Bottom" },
+        { "value": "center left",   "label": "Left" },
+        { "value": "center right",  "label": "Right" }
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image_overlay",
+      "label": "Show Image Gradient Overlay",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image_frame",
+      "label": "Show Decorative Frame on Image",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "frame_offset",
+      "min": 6,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Frame Inset Distance",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Image Border Radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "image_mobile_height",
+      "min": 260,
+      "max": 600,
+      "step": 20,
+      "unit": "px",
+      "label": "Image Height on Mobile",
+      "default": 360
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_image_first",
+      "label": "Show Image Above Form on Mobile",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "🖼 Image Caption"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image_caption",
+      "label": "Show Caption on Image",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "image_caption_eyebrow",
+      "label": "Caption Eyebrow",
+      "default": "Handcrafted in Varanasi"
+    },
+    {
+      "type": "text",
+      "id": "image_caption_text",
+      "label": "Caption Heading",
+      "default": "Every thread tells a story"
+    },
+    {
+      "type": "range",
+      "id": "caption_size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Caption Heading Size",
+      "default": 22
+    },
+
+    {
+      "type": "header",
+      "content": "🎨 Colors"
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Section Background",
+      "default": "#faf7f2"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent Color (gold)",
+      "default": "#c9a96e"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#1a1008"
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Body / Description Color",
+      "default": "#6b6258"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Form Label Color",
+      "default": "#4a3f35"
+    },
+    {
+      "type": "color",
+      "id": "input_bg",
+      "label": "Input Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "input_border",
+      "label": "Input Border",
+      "default": "#e0d8cc"
+    },
+    {
+      "type": "color",
+      "id": "input_focus_color",
+      "label": "Input Focus Color",
+      "default": "#c9a96e"
+    },
+    {
+      "type": "color",
+      "id": "input_text_color",
+      "label": "Input Text Color",
+      "default": "#1a1008"
+    },
+    {
+      "type": "color",
+      "id": "placeholder_color",
+      "label": "Placeholder Text Color",
+      "default": "#b0a898"
+    },
+    {
+      "type": "color",
+      "id": "image_frame_color",
+      "label": "Image Decorative Frame Color",
+      "default": "#c9a96e"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider Line Color",
+      "default": "#e0d8cc"
+    },
+
+    {
+      "type": "header",
+      "content": "🔘 Submit Button"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg",
+      "label": "Button Background",
+      "default": "#1a1008"
+    },
+    {
+      "type": "color",
+      "id": "btn_text",
+      "label": "Button Text",
+      "default": "#f8f4ec"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_bg",
+      "label": "Button Hover Background",
+      "default": "#c9a96e"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_text",
+      "label": "Button Hover Text",
+      "default": "#1a1008"
+    },
+    {
+      "type": "range",
+      "id": "btn_font_size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Button Font Size",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "btn_pad_v",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Button Vertical Padding",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "btn_pad_h",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Button Horizontal Padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "btn_radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Button Border Radius",
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "btn_align",
+      "label": "Button Alignment",
+      "options": [
+        { "value": "flex-start", "label": "Left" },
+        { "value": "center",     "label": "Center" },
+        { "value": "flex-end",   "label": "Right" }
+      ],
+      "default": "flex-start"
+    },
+    {
+      "type": "checkbox",
+      "id": "btn_full_width",
+      "label": "Full Width Button",
+      "default": false
+    },
+
+    {
+      "type": "header",
+      "content": "🔤 Typography"
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Heading Font",
+      "default": "playfair_display_n4"
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Heading Font Weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "font_picker",
+      "id": "body_font",
+      "label": "Body / Label Font",
+      "default": "josefin_sans_n4"
+    },
+    {
+      "type": "range",
+      "id": "body_size",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Body Text Size",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "label_size",
+      "min": 9,
+      "max": 14,
+      "step": 1,
+      "unit": "px",
+      "label": "Form Label Size",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "input_font_size",
+      "min": 13,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Input Text Size",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "input_pad_v",
+      "min": 8,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Input Vertical Padding",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "input_pad_h",
+      "min": 10,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Input Horizontal Padding",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "input_radius",
+      "min": 0,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Input Border Radius",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "textarea_height",
+      "min": 100,
+      "max": 280,
+      "step": 10,
+      "unit": "px",
+      "label": "Textarea Min Height",
+      "default": 140
+    },
+    {
+      "type": "range",
+      "id": "field_gap",
+      "min": 8,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap Between Form Fields",
+      "default": 18
+    },
+
+    {
+      "type": "header",
+      "content": "📐 Layout & Spacing"
+    },
+    {
+      "type": "select",
+      "id": "form_col_width",
+      "label": "Form Column Width",
+      "options": [
+        { "value": "1",   "label": "Narrow (1fr)" },
+        { "value": "1.1", "label": "Slightly Wide (1.1fr)" },
+        { "value": "1.2", "label": "Wide (1.2fr)" },
+        { "value": "1.4", "label": "Wider (1.4fr)" }
+      ],
+      "default": "1.1"
+    },
+    {
+      "type": "select",
+      "id": "image_col_width",
+      "label": "Image Column Width",
+      "options": [
+        { "value": "0.8", "label": "Narrow (0.8fr)" },
+        { "value": "1",   "label": "Equal (1fr)" },
+        { "value": "1.1", "label": "Wide (1.1fr)" },
+        { "value": "1.2", "label": "Wider (1.2fr)" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 20,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap Between Form & Image",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "grid_mb",
+      "min": 20,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Form/Image Bottom Margin",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 840,
+      "max": 1640,
+      "step": 40,
+      "unit": "px",
+      "default": 1120,
+      "label": "Section Max Width"
+    },
+    {
+      "type": "range",
+      "id": "section_pad_v",
+      "min": 40,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Section Vertical Padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_pad_h",
+      "min": 16,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Section Horizontal Padding",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "mobile_pad_h",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Mobile Horizontal Padding",
+      "default": 20
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show Divider Above Contact Details",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "details_gap",
+      "min": 20,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Space Above Contact Details",
+      "default": 40
+    },
+
+    {
+      "type": "header",
+      "content": "📇 Contact Detail Cards"
+    },
+    {
+      "type": "color",
+      "id": "detail_bg",
+      "label": "Card Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "detail_border_color",
+      "label": "Card Border Color",
+      "default": "#e8e0d4"
+    },
+    {
+      "type": "color",
+      "id": "detail_icon_bg",
+      "label": "Icon Background",
+      "default": "#faf3e7"
+    },
+    {
+      "type": "color",
+      "id": "detail_icon_color",
+      "label": "Icon Color",
+      "default": "#c9a96e"
+    },
+    {
+      "type": "color",
+      "id": "detail_title_color",
+      "label": "Card Label Color",
+      "default": "#1a1008"
+    },
+    {
+      "type": "color",
+      "id": "detail_text_color",
+      "label": "Card Value Color",
+      "default": "#6b6258"
+    },
+    {
+      "type": "range",
+      "id": "detail_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Card Border Radius",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "detail_pad_v",
+      "min": 12,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "label": "Card Vertical Padding",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "detail_pad_h",
+      "min": 12,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "label": "Card Horizontal Padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "detail_icon_size",
+      "min": 32,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "label": "Icon Box Size",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "detail_icon_radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Icon Box Radius",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "detail_icon_gap",
+      "min": 8,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap: Icon → Text",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "detail_item_gap",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap Between Detail Cards",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "detail_label_size",
+      "min": 9,
+      "max": 14,
+      "step": 1,
+      "unit": "px",
+      "label": "Card Label Font Size",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "detail_value_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Card Value Font Size",
+      "default": 14
+    }
+  ],
+
+  "blocks": [
+    {
+      "type": "contact_detail",
+      "name": "Contact Detail",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "address",   "label": "📍 Address / Location" },
+            { "value": "email",     "label": "✉️ Email" },
+            { "value": "phone",     "label": "📞 Phone" },
+            { "value": "whatsapp",  "label": "💬 WhatsApp" },
+            { "value": "clock",     "label": "🕐 Hours / Timing" },
+            { "value": "instagram", "label": "📸 Instagram" }
+          ],
+          "default": "address"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Our Address"
+        },
+        {
+          "type": "textarea",
+          "id": "value",
+          "label": "Value / Content",
+          "default": "123 Silk Lane, Varanasi, Uttar Pradesh 221001, India"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional)",
+          "info": "e.g. Google Maps URL, mailto:, tel:"
+        }
+      ]
+    }
+  ],
+
+  "presets": [
+    {
+      "name": "Contact Section",
+      "blocks": [
+        {
+          "type": "contact_detail",
+          "settings": {
+            "icon": "address",
+            "label": "Our Studio",
+            "value": "123 Silk Lane, Varanasi\nUttar Pradesh 221001, India"
+          }
+        },
+        {
+          "type": "contact_detail",
+          "settings": {
+            "icon": "email",
+            "label": "Email Us",
+            "value": "hello@yoursareestore.com"
+          }
+        },
+        {
+          "type": "contact_detail",
+          "settings": {
+            "icon": "phone",
+            "label": "Call Us",
+            "value": "+91 98765 43210"
+          }
+        },
+        {
+          "type": "contact_detail",
+          "settings": {
+            "icon": "whatsapp",
+            "label": "WhatsApp",
+            "value": "Chat with us on WhatsApp"
+          }
+        },
+        {
+          "type": "contact_detail",
+          "settings": {
+            "icon": "clock",
+            "label": "Working Hours",
+            "value": "Mon – Sat: 10am – 7pm IST"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

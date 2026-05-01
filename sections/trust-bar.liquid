@@ -1,0 +1,726 @@
+{% comment %}
+  ┌─────────────────────────────────────────────────────────────┐
+  │   TRUST BAR — Icon + Title + Subtitle blocks                │
+  │   Shopify Dawn Theme                                        │
+  │   · Up to 6 feature blocks                                  │
+  │   · SVG icon picker (built-in set) OR custom image          │
+  │   · Divider lines between items                             │
+  │   · Full schema: colors, typography, spacing, layout        │
+  │   · Fully responsive — stacks on mobile                     │
+  └─────────────────────────────────────────────────────────────┘
+{% endcomment %}
+
+{%- liquid
+  assign heading_font = section.settings.heading_font
+  assign body_font    = section.settings.body_font
+-%}
+
+
+<style>
+/* ============================================================
+   CSS VARIABLES
+   ============================================================ */
+#shopify-section-{{ section.id }} {
+  --tb-bg:           {{ section.settings.bg_color }};
+  --tb-border-color: {{ section.settings.border_color }};
+  --tb-icon-color:   {{ section.settings.icon_color }};
+  --tb-title-color:  {{ section.settings.title_color }};
+  --tb-sub-color:    {{ section.settings.subtitle_color }};
+  --tb-divider:      {{ section.settings.divider_color }};
+  --tb-pad-v:        {{ section.settings.padding_v }}px;
+  --tb-pad-h:        {{ section.settings.padding_h }}px;
+  --tb-icon-size:    {{ section.settings.icon_size }}px;
+  --tb-gap:          {{ section.settings.item_gap }}px;
+  --tb-title-size:   {{ section.settings.title_size }}px;
+  --tb-sub-size:     {{ section.settings.subtitle_size }}px;
+  --tb-radius:       {{ section.settings.section_radius }}px;
+}
+
+/* ============================================================
+   SECTION WRAPPER
+   ============================================================ */
+.tb-section {
+  background: var(--tb-bg);
+  padding: var(--tb-pad-v) var(--tb-pad-h);
+  {% if section.settings.show_border_top %}
+    border-top: 1px solid var(--tb-border-color);
+  {% endif %}
+  {% if section.settings.show_border_bottom %}
+    border-bottom: 1px solid var(--tb-border-color);
+  {% endif %}
+  border-radius: var(--tb-radius);
+}
+
+.tb-inner {
+  max-width: {{ section.settings.max_width }}px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: {{ section.settings.justify }};
+  gap: 0;
+  flex-wrap: wrap;
+}
+
+/* ============================================================
+   SINGLE FEATURE ITEM
+   ============================================================ */
+.tb-item {
+  display: flex;
+  align-items: center;
+  gap: {{ section.settings.icon_text_gap }}px;
+  flex: 1 1 0;
+  min-width: 200px;
+  padding: {{ section.settings.item_pad_v }}px {{ section.settings.item_pad_h }}px;
+
+  {% case section.settings.item_align %}
+    {% when 'center' %}
+      flex-direction: column;
+      text-align: center;
+    {% when 'top' %}
+      align-items: flex-start;
+    {% else %}
+      align-items: center;
+  {% endcase %}
+}
+
+/* Divider between items */
+.tb-item + .tb-item {
+  {% if section.settings.show_divider %}
+    border-left: 1px solid var(--tb-divider);
+  {% endif %}
+}
+
+/* ============================================================
+   ICON
+   ============================================================ */
+.tb-icon {
+  flex-shrink: 0;
+  width: var(--tb-icon-size);
+  height: var(--tb-icon-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--tb-icon-color);
+}
+
+.tb-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--tb-icon-color);
+  stroke-width: {{ section.settings.icon_stroke_width }};
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* When using image icon */
+.tb-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: {{ section.settings.icon_filter }};
+}
+
+/* ============================================================
+   TEXT
+   ============================================================ */
+.tb-text {
+  display: flex;
+  flex-direction: column;
+  gap: {{ section.settings.title_sub_gap }}px;
+}
+
+.tb-title {
+  font-family: {{ heading_font.family }}, sans-serif;
+  font-size: var(--tb-title-size);
+  font-weight: {{ section.settings.title_weight }};
+  color: var(--tb-title-color);
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: {{ section.settings.title_spacing }}em;
+}
+
+.tb-subtitle {
+  font-family: {{ body_font.family }}, sans-serif;
+  font-size: var(--tb-sub-size);
+  font-weight: {{ section.settings.subtitle_weight }};
+  color: var(--tb-sub-color);
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+@media (max-width: {{ section.settings.mobile_breakpoint }}px) {
+  .tb-inner {
+    flex-direction: {% if section.settings.mobile_layout == 'grid' %}row{% else %}column{% endif %};
+    {% if section.settings.mobile_layout == 'grid' %}
+      flex-wrap: wrap;
+      justify-content: center;
+    {% endif %}
+    gap: 0;
+  }
+
+  .tb-item {
+    {% if section.settings.mobile_layout == 'grid' %}
+      flex: 0 0 calc(50% - {{ section.settings.item_pad_h }}px);
+      min-width: 0;
+    {% else %}
+      flex: none;
+      width: 100%;
+    {% endif %}
+    border-left: none !important;
+    {% if section.settings.mobile_show_divider %}
+      border-bottom: 1px solid var(--tb-divider);
+    {% endif %}
+    {% if section.settings.mobile_center %}
+      justify-content: center;
+      text-align: center;
+      flex-direction: {% if section.settings.item_align == 'center' %}column{% else %}row{% endif %};
+    {% endif %}
+  }
+
+  .tb-item:last-child {
+    border-bottom: none;
+  }
+
+  .tb-title {
+    font-size: {{ section.settings.title_size | times: 0.9 | round }}px;
+  }
+
+  .tb-subtitle {
+    font-size: {{ section.settings.subtitle_size | times: 0.9 | round }}px;
+  }
+
+  .tb-icon {
+    width: {{ section.settings.icon_size | times: 0.85 | round }}px;
+    height: {{ section.settings.icon_size | times: 0.85 | round }}px;
+  }
+}
+</style>
+
+{%- comment -%} ── SVG icon macro ─────────────────────────────── {%- endcomment -%}
+{%- capture svg_shipping -%}
+<svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+  <rect x="2" y="14" width="34" height="22" rx="2"/>
+  <path d="M36 18h8l6 8v10h-14V18z"/>
+  <circle cx="13" cy="38" r="4"/>
+  <circle cx="43" cy="38" r="4"/>
+  <line x1="2" y1="26" x2="36" y2="26"/>
+</svg>
+{%- endcapture -%}
+
+{%- capture svg_support -%}
+<svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="28" cy="22" r="10"/>
+  <path d="M18 22a10 10 0 0 0-4 8"/>
+  <path d="M38 22a10 10 0 0 1 4 8"/>
+  <path d="M14 30a6 6 0 0 0 6 6v4"/>
+  <path d="M42 30a6 6 0 0 1-6 6v4"/>
+  <path d="M20 46h16"/>
+</svg>
+{%- endcapture -%}
+
+{%- capture svg_payment -%}
+<svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+  <rect x="8" y="10" width="30" height="38" rx="3"/>
+  <line x1="14" y1="20" x2="32" y2="20"/>
+  <line x1="14" y1="27" x2="32" y2="27"/>
+  <line x1="14" y1="34" x2="24" y2="34"/>
+  <rect x="32" y="30" width="16" height="18" rx="3"/>
+  <line x1="36" y1="36" x2="44" y2="36"/>
+  <line x1="36" y1="41" x2="44" y2="41"/>
+</svg>
+{%- endcapture -%}
+
+{%- capture svg_returns -%}
+<svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+  <path d="M10 28a18 18 0 1 1 5 13"/>
+  <polyline points="4,34 10,28 16,34"/>
+  <line x1="28" y1="18" x2="28" y2="28"/>
+  <line x1="28" y1="28" x2="36" y2="36"/>
+</svg>
+{%- endcapture -%}
+
+{%- capture svg_quality -%}
+<svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+  <path d="M28 4l5.5 11 12 1.7-8.7 8.5 2 12-10.8-5.7L17.2 37l2-12L10.5 16.7l12-1.7z"/>
+</svg>
+{%- endcapture -%}
+
+{%- capture svg_secure -%}
+<svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+  <path d="M28 6l18 7v12c0 11-8 21-18 25C18 46 10 36 10 25V13z"/>
+  <polyline points="20,28 25,33 36,22"/>
+</svg>
+{%- endcapture -%}
+
+{%- capture svg_gift -%}
+<svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+  <rect x="6" y="20" width="44" height="8" rx="2"/>
+  <rect x="10" y="28" width="36" height="22" rx="2"/>
+  <line x1="28" y1="20" x2="28" y2="50"/>
+  <path d="M28 20c0 0-8-14 0-14s0 14 0 14"/>
+  <path d="M28 20c0 0 8-14 0-14"/>
+</svg>
+{%- endcapture -%}
+
+{%- capture svg_handmade -%}
+<svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+  <path d="M18 30V16a4 4 0 0 1 8 0v10"/>
+  <path d="M26 22V14a4 4 0 0 1 8 0v12"/>
+  <path d="M34 24v-6a4 4 0 0 1 8 0v14c0 10-6 18-18 18a14 14 0 0 1-12-14v-8a4 4 0 0 1 4-4h1"/>
+</svg>
+{%- endcapture -%}
+
+<section class="tb-section" id="shopify-section-{{ section.id }}-wrap">
+  <div class="tb-inner">
+
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'feature' -%}
+        <div class="tb-item" {{ block.shopify_attributes }}>
+
+          {%- comment -%} ── Icon ── {%- endcomment -%}
+          {%- unless block.settings.icon_choice == 'none' -%}
+            <div class="tb-icon">
+              {%- if block.settings.custom_image != blank -%}
+                {{ block.settings.custom_image | image_url: width: 120 | image_tag: loading: 'lazy', alt: block.settings.title }}
+              {%- else -%}
+                {%- case block.settings.icon_choice -%}
+                  {%- when 'shipping' -%}  {{ svg_shipping }}
+                  {%- when 'support' -%}   {{ svg_support }}
+                  {%- when 'payment' -%}   {{ svg_payment }}
+                  {%- when 'returns' -%}   {{ svg_returns }}
+                  {%- when 'quality' -%}   {{ svg_quality }}
+                  {%- when 'secure' -%}    {{ svg_secure }}
+                  {%- when 'gift' -%}      {{ svg_gift }}
+                  {%- when 'handmade' -%}  {{ svg_handmade }}
+                {%- endcase -%}
+              {%- endif -%}
+            </div>
+          {%- endunless -%}
+
+          {%- comment -%} ── Text ── {%- endcomment -%}
+          <div class="tb-text">
+            {%- if block.settings.title != blank -%}
+              <p class="tb-title">{{ block.settings.title }}</p>
+            {%- endif -%}
+            {%- if block.settings.subtitle != blank -%}
+              <p class="tb-subtitle">{{ block.settings.subtitle }}</p>
+            {%- endif -%}
+          </div>
+
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Trust Bar",
+  "tag": "section",
+  "class": "section-trust-bar",
+  "max_blocks": 6,
+  "settings": [
+
+    {
+      "type": "header",
+      "content": "🎨 Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon Color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle Color",
+      "default": "#6b6560"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Top / Bottom Border Color",
+      "default": "#e8e3dc"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider Between Items",
+      "default": "#e8e3dc"
+    },
+
+    {
+      "type": "header",
+      "content": "🔤 Typography"
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Title Font",
+      "default": "assistant_n7"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Title Font Size",
+      "default": 15
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Title Font Weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "select",
+      "id": "title_spacing",
+      "label": "Title Letter Spacing",
+      "options": [
+        { "value": "0",    "label": "None" },
+        { "value": "0.01", "label": "Tight (0.01em)" },
+        { "value": "0.02", "label": "Normal (0.02em)" },
+        { "value": "0.05", "label": "Wide (0.05em)" }
+      ],
+      "default": "0"
+    },
+    {
+      "type": "font_picker",
+      "id": "body_font",
+      "label": "Subtitle Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Subtitle Font Size",
+      "default": 13
+    },
+    {
+      "type": "select",
+      "id": "subtitle_weight",
+      "label": "Subtitle Font Weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" }
+      ],
+      "default": "400"
+    },
+
+    {
+      "type": "header",
+      "content": "🖼 Icon Style"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 28,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Icon Size",
+      "default": 48
+    },
+    {
+      "type": "select",
+      "id": "icon_stroke_width",
+      "label": "Icon Stroke Width",
+      "options": [
+        { "value": "1",   "label": "Thin (1px)" },
+        { "value": "1.5", "label": "Regular (1.5px)" },
+        { "value": "2",   "label": "Medium (2px)" },
+        { "value": "2.5", "label": "Bold (2.5px)" }
+      ],
+      "default": "1.5"
+    },
+    {
+      "type": "select",
+      "id": "icon_filter",
+      "label": "Custom Image Icon — Color Filter",
+      "options": [
+        { "value": "none",       "label": "Original Color" },
+        { "value": "grayscale(1)", "label": "Black & White" },
+        { "value": "invert(1)",   "label": "Invert (for dark bg)" }
+      ],
+      "default": "grayscale(1)"
+    },
+
+    {
+      "type": "header",
+      "content": "📐 Layout & Spacing"
+    },
+    {
+      "type": "select",
+      "id": "item_align",
+      "label": "Icon & Text Alignment",
+      "options": [
+        { "value": "center-row", "label": "Icon Left, Text Center-Aligned" },
+        { "value": "top",        "label": "Icon Left, Text Top-Aligned" },
+        { "value": "center",     "label": "Icon Above, Text Centered" }
+      ],
+      "default": "center-row"
+    },
+    {
+      "type": "select",
+      "id": "justify",
+      "label": "Items Justify",
+      "options": [
+        { "value": "space-around",  "label": "Space Around" },
+        { "value": "space-between", "label": "Space Between" },
+        { "value": "center",        "label": "Center" },
+        { "value": "flex-start",    "label": "Left" }
+      ],
+      "default": "space-around"
+    },
+    {
+      "type": "range",
+      "id": "icon_text_gap",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap: Icon → Text",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "title_sub_gap",
+      "min": 2,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Gap: Title → Subtitle",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "item_pad_v",
+      "min": 8,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Item Vertical Padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "item_pad_h",
+      "min": 8,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Item Horizontal Padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 800,
+      "max": 1600,
+      "step": 40,
+      "unit": "px",
+      "label": "Section Max Width",
+      "default": 1280
+    },
+    {
+      "type": "range",
+      "id": "padding_v",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Section Vertical Padding",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_h",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Section Horizontal Padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "section_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Section Border Radius",
+      "default": 0
+    },
+
+    {
+      "type": "header",
+      "content": "🔲 Borders & Dividers"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_border_top",
+      "label": "Show Top Border",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_border_bottom",
+      "label": "Show Bottom Border",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show Divider Between Items",
+      "default": true
+    },
+
+    {
+      "type": "header",
+      "content": "📱 Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_breakpoint",
+      "min": 480,
+      "max": 900,
+      "step": 10,
+      "unit": "px",
+      "default": 650,
+      "label": "Mobile Breakpoint",
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile Layout",
+      "options": [
+        { "value": "stack",  "label": "Stack (1 column)" },
+        { "value": "grid",   "label": "Grid (2 columns)" }
+      ],
+      "default": "stack"
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_center",
+      "label": "Center Items on Mobile",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_show_divider",
+      "label": "Show Divider Between Items on Mobile",
+      "default": true
+    }
+
+  ],
+
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature Item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon_choice",
+          "label": "Icon",
+          "options": [
+            { "value": "shipping",  "label": "🚚 International Shipping" },
+            { "value": "support",   "label": "🎧 Online Support" },
+            { "value": "payment",   "label": "💳 Flexible Payment" },
+            { "value": "returns",   "label": "↩️ Easy Returns" },
+            { "value": "quality",   "label": "⭐ Premium Quality" },
+            { "value": "secure",    "label": "🔒 Secure Shopping" },
+            { "value": "gift",      "label": "🎁 Gift Wrapping" },
+            { "value": "handmade",  "label": "✋ Handmade" },
+            { "value": "none",      "label": "No Icon" }
+          ],
+          "default": "shipping"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "Custom Icon Image",
+          "info": "Overrides the built-in icon above. Use a square PNG/SVG."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "International Shipping"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle",
+          "default": "Free Shipping for orders over ₹25,000"
+        }
+      ]
+    }
+  ],
+
+  "presets": [
+    {
+      "name": "Trust Bar",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "icon_choice": "shipping",
+            "title": "International Shipping",
+            "subtitle": "Free Shipping for orders over ₹25,000"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon_choice": "support",
+            "title": "Online Support",
+            "subtitle": "24 hours a day, 7 days a week"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon_choice": "payment",
+            "title": "Flexible Payment",
+            "subtitle": "Multiple payment options"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

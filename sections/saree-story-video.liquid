@@ -1,0 +1,871 @@
+{% comment %}
+  ═══════════════════════════════════════════════════════════════════
+  SAREE STORY — Premium Video Section for Shopify
+  ═══════════════════════════════════════════════════════════════════
+  Features:
+  • Autoplay when ≥50% of section enters viewport (IntersectionObserver)
+  • Pause automatically when section exits viewport
+  • Supports: Shopify-hosted video, YouTube, Vimeo, external MP4
+  • Poster image shown before video plays (no layout shift)
+  • Muted autoplay (browser policy safe) with unmute toggle
+  • Cinematic text overlay with scroll-reveal animation
+  • Gold ornamental dividers — luxury editorial aesthetic
+  • Zero LCP impact: video never blocks page load
+  • Schema: full control from Theme Editor — no code needed
+  ═══════════════════════════════════════════════════════════════════
+{% endcomment %}
+
+{%- liquid
+  assign section_id    = 'ssv-' | append: section.id
+  assign video_type    = section.settings.video_type
+  assign mp4_url       = section.settings.mp4_url
+  assign yt_id         = section.settings.youtube_id
+  assign vimeo_id      = section.settings.vimeo_id
+  assign poster        = section.settings.poster_image
+  assign overlay_pct   = section.settings.overlay_opacity | divided_by: 100.0
+-%}
+
+
+<section
+  class="saree-story"
+  id="{{ section_id }}"
+  data-video-type="{{ video_type }}"
+  data-yt-id="{{ yt_id }}"
+  data-vimeo-id="{{ vimeo_id }}"
+  aria-label="{{ section.settings.heading | escape }}"
+>
+
+  {%- comment %} ── ORNAMENTAL TOP BORDER ── {%- endcomment %}
+  <div class="saree-story__ornament saree-story__ornament--top" aria-hidden="true">
+    <svg viewBox="0 0 1200 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="0" y1="20" x2="520" y2="20" stroke="currentColor" stroke-width="0.8" opacity="0.6"/>
+      <path d="M540,20 L555,8 L570,20 L585,8 L600,20 L615,8 L630,20 L645,8 L660,20" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.9"/>
+      <circle cx="600" cy="20" r="5" fill="none" stroke="currentColor" stroke-width="1"/>
+      <circle cx="600" cy="20" r="2" fill="currentColor" opacity="0.7"/>
+      <line x1="680" y1="20" x2="1200" y2="20" stroke="currentColor" stroke-width="0.8" opacity="0.6"/>
+    </svg>
+  </div>
+
+  {%- comment %} ── PRE-HEADING ── {%- endcomment %}
+  {% if section.settings.pre_heading != blank %}
+    <p class="saree-story__pre-heading" data-reveal>{{ section.settings.pre_heading }}</p>
+  {% endif %}
+
+  {%- comment %} ── HEADING ── {%- endcomment %}
+  {% if section.settings.heading != blank %}
+    <h2 class="saree-story__heading" data-reveal>{{ section.settings.heading }}</h2>
+  {% endif %}
+
+  {%- comment %} ── SUBTEXT ── {%- endcomment %}
+  {% if section.settings.subtext != blank %}
+    <p class="saree-story__subtext" data-reveal>{{ section.settings.subtext }}</p>
+  {% endif %}
+
+  {%- comment %} ── VIDEO STAGE ── {%- endcomment %}
+  <div class="saree-story__stage" data-reveal>
+
+    {%- comment %} Poster / placeholder shown until video plays {%- endcomment %}
+    <div class="saree-story__poster" id="{{ section_id }}-poster" aria-hidden="true">
+      {%- if poster != blank -%}
+        {{
+          poster
+          | image_url: width: 1800
+          | image_tag:
+            loading: 'lazy',
+            widths: '600, 900, 1200, 1600, 1800',
+            sizes: '100vw',
+            class: 'saree-story__poster-img',
+            alt: section.settings.heading | escape
+        }}
+      {%- else -%}
+        <div class="saree-story__poster-fallback"></div>
+      {%- endif -%}
+      <div class="saree-story__poster-overlay"></div>
+    </div>
+
+    {%- comment %} ── VIDEO ELEMENT (hosted / mp4) ── {%- endcomment %}
+    {%- if video_type == 'hosted' or video_type == 'mp4' -%}
+      {%- if video_type == 'hosted' and section.settings.shopify_video != blank -%}
+        {{
+          section.settings.shopify_video
+          | video_tag:
+            image_size: '1800x',
+            autoplay: false,
+            loop: section.settings.loop,
+            muted: true,
+            controls: false,
+            class: 'saree-story__video',
+            id: section_id | append: '-video'
+        }}
+      {%- elsif video_type == 'mp4' and mp4_url != blank -%}
+        <video
+          class="saree-story__video"
+          id="{{ section_id }}-video"
+          src="{{ mp4_url }}"
+          {% if section.settings.loop %}loop{% endif %}
+          muted
+          playsinline
+          preload="none"
+        ></video>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- comment %} ── YOUTUBE IFRAME ── {%- endcomment %}
+    {%- if video_type == 'youtube' and yt_id != blank -%}
+      <div
+        class="saree-story__iframe-wrap"
+        id="{{ section_id }}-iframe-wrap"
+        data-src="https://www.youtube.com/embed/{{ yt_id }}?autoplay=1&mute=1&loop={% if section.settings.loop %}1{% else %}0{% endif %}&playlist={{ yt_id }}&controls=0&rel=0&enablejsapi=1&playsinline=1"
+      ></div>
+    {%- endif -%}
+
+    {%- comment %} ── VIMEO IFRAME ── {%- endcomment %}
+    {%- if video_type == 'vimeo' and vimeo_id != blank -%}
+      <div
+        class="saree-story__iframe-wrap"
+        id="{{ section_id }}-iframe-wrap"
+        data-src="https://player.vimeo.com/video/{{ vimeo_id }}?autoplay=1&muted=1&loop={% if section.settings.loop %}1{% else %}0{% endif %}&background=1"
+      ></div>
+    {%- endif -%}
+
+    {%- comment %} ── VIDEO OVERLAY TEXT ── {%- endcomment %}
+    {% if section.settings.overlay_quote != blank %}
+      <div class="saree-story__video-overlay">
+        <blockquote class="saree-story__quote">
+          <span class="saree-story__quote-mark">"</span>
+          {{ section.settings.overlay_quote }}
+          <span class="saree-story__quote-mark">"</span>
+        </blockquote>
+      </div>
+    {% endif %}
+
+    {%- comment %} ── MUTE TOGGLE (native video only) ── {%- endcomment %}
+    {%- if video_type == 'hosted' or video_type == 'mp4' -%}
+      <button class="saree-story__mute-btn" id="{{ section_id }}-mute" aria-label="Toggle sound" title="Toggle sound">
+        <span class="saree-story__mute-icon saree-story__mute-icon--off">
+          {%- comment %} Sound off icon {%- endcomment %}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+          </svg>
+        </span>
+        <span class="saree-story__mute-icon saree-story__mute-icon--on" style="display:none">
+          {%- comment %} Sound on icon {%- endcomment %}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          </svg>
+        </span>
+      </button>
+    {%- endif -%}
+
+    {%- comment %} ── PLAY/PAUSE INDICATOR ── {%- endcomment %}
+    <div class="saree-story__play-indicator" id="{{ section_id }}-play-indicator" aria-hidden="true">
+      <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="30" cy="30" r="28" stroke="currentColor" stroke-width="1"/>
+        <polygon points="24,18 46,30 24,42" fill="currentColor"/>
+      </svg>
+    </div>
+
+  </div>{%- comment %} /.saree-story__stage {%- endcomment %}
+
+  {%- comment %} ── BOTTOM CONTENT ── {%- endcomment %}
+  <div class="saree-story__footer" data-reveal>
+    <div class="saree-story__divider" aria-hidden="true">
+      <svg viewBox="0 0 400 24" xmlns="http://www.w3.org/2000/svg">
+        <line x1="0" y1="12" x2="155" y2="12" stroke="currentColor" stroke-width="0.6" opacity="0.5"/>
+        <path d="M165,12 L175,4 L185,12 L195,4 L200,12 L205,4 L215,12 L225,4 L235,12" fill="none" stroke="currentColor" stroke-width="0.7" opacity="0.8"/>
+        <line x1="245" y1="12" x2="400" y2="12" stroke="currentColor" stroke-width="0.6" opacity="0.5"/>
+      </svg>
+    </div>
+
+    {% if section.settings.body_text != blank %}
+      <p class="saree-story__body">{{ section.settings.body_text }}</p>
+    {% endif %}
+
+    {% if section.settings.cta_label != blank and section.settings.cta_link != blank %}
+      <a href="{{ section.settings.cta_link }}" class="saree-story__cta">
+        <span>{{ section.settings.cta_label }}</span>
+        <svg class="saree-story__cta-arrow" viewBox="0 0 40 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="0" y1="6" x2="34" y2="6" stroke="currentColor" stroke-width="1"/>
+          <polyline points="28,1 34,6 28,11" stroke="currentColor" stroke-width="1" fill="none"/>
+        </svg>
+      </a>
+    {% endif %}
+  </div>
+
+  {%- comment %} ── ORNAMENTAL BOTTOM BORDER ── {%- endcomment %}
+  <div class="saree-story__ornament saree-story__ornament--bottom" aria-hidden="true">
+    <svg viewBox="0 0 1200 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="0" y1="20" x2="520" y2="20" stroke="currentColor" stroke-width="0.8" opacity="0.6"/>
+      <path d="M540,20 L555,32 L570,20 L585,32 L600,20 L615,32 L630,20 L645,32 L660,20" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.9"/>
+      <circle cx="600" cy="20" r="5" fill="none" stroke="currentColor" stroke-width="1"/>
+      <circle cx="600" cy="20" r="2" fill="currentColor" opacity="0.7"/>
+      <line x1="680" y1="20" x2="1200" y2="20" stroke="currentColor" stroke-width="0.8" opacity="0.6"/>
+    </svg>
+  </div>
+
+</section>
+
+{% comment %} ═══════════════ STYLES ═══════════════ {% endcomment %}
+<style>
+  #{{ section_id }} {
+    --ssv-bg:           {{ section.settings.bg_color }};
+    --ssv-text:         {{ section.settings.text_color }};
+    --ssv-gold:         {{ section.settings.gold_color }};
+    --ssv-overlay:      rgba(0,0,0,{{ overlay_pct }});
+    --ssv-ratio:        {{ section.settings.video_ratio }};
+    --ssv-max-w:        {{ section.settings.max_width }}px;
+    --ssv-pad-top:      {{ section.settings.padding_top }}px;
+    --ssv-pad-bottom:   {{ section.settings.padding_bottom }}px;
+    --ssv-quote-size:   clamp(1.1rem, 2.5vw, 1.8rem);
+  }
+
+  /* ── Section shell ── */
+  #{{ section_id }} {
+    background-color: var(--ssv-bg);
+    color: var(--ssv-text);
+    padding: var(--ssv-pad-top) 24px var(--ssv-pad-bottom);
+    text-align: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ── Ornaments ── */
+  #{{ section_id }} .saree-story__ornament {
+    color: var(--ssv-gold);
+    display: block;
+    width: 100%;
+    max-width: var(--ssv-max-w);
+    margin: 0 auto;
+    height: 40px;
+  }
+  #{{ section_id }} .saree-story__ornament svg { width: 100%; height: 100%; }
+  #{{ section_id }} .saree-story__ornament--top { margin-bottom: 32px; }
+  #{{ section_id }} .saree-story__ornament--bottom { margin-top: 32px; }
+
+  /* ── Pre-heading ── */
+  #{{ section_id }} .saree-story__pre-heading {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.6rem, 1.2vw, 1.25rem);
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--ssv-gold);
+    margin: 0 0 16px;
+    opacity: 0.85;
+  }
+
+  /* ── Main heading ── */
+  #{{ section_id }} .saree-story__heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 6vw, 4.5rem);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.15;
+    color: var(--ssv-text);
+    margin: 0 auto 20px;
+    max-width: 760px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Subtext ── */
+  #{{ section_id }} .saree-story__subtext {
+    font-family: 'Cormorant Garamond', serif;
+    font-size:15px;
+    font-style: italic;
+    color: var(--ssv-text);
+    opacity: 0.7;
+    max-width: 560px;
+    margin: 0 auto 40px;
+    line-height: 1.2;
+  }
+
+  /* ── Stage ── */
+  #{{ section_id }} .saree-story__stage {
+    position: relative;
+    max-width: var(--ssv-max-w);
+    margin: 0 auto;
+    aspect-ratio: var(--ssv-ratio);
+    background: #0a0604;
+    overflow: hidden;
+    border-radius: 4px;
+    box-shadow:
+      0 0 0 1px rgba({{ section.settings.gold_color | color_extract: 'red' }},{{ section.settings.gold_color | color_extract: 'green' }},{{ section.settings.gold_color | color_extract: 'blue' }}, 0.25),
+      0 32px 80px rgba(0,0,0,0.55),
+      0 8px 24px rgba(0,0,0,0.35);
+    cursor: pointer;
+  }
+
+  /* ── Poster ── */
+  #{{ section_id }} .saree-story__poster {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    transition: opacity 0.8s ease;
+  }
+  #{{ section_id }} .saree-story__poster.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  #{{ section_id }} .saree-story__poster-img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  #{{ section_id }} .saree-story__poster-fallback {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, #1a0e05 0%, #3b1f0c 50%, #1a0e05 100%);
+  }
+  #{{ section_id }} .saree-story__poster-overlay {
+    position: absolute; inset: 0;
+    background: var(--ssv-overlay);
+  }
+
+  /* ── Native video ── */
+  #{{ section_id }} .saree-story__video {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+
+  /* ── iFrame embed ── */
+  #{{ section_id }} .saree-story__iframe-wrap {
+    position: absolute;
+    inset: -10%; /* slightly oversized to hide controls */
+    z-index: 1;
+  }
+  #{{ section_id }} .saree-story__iframe-wrap iframe {
+    width: 100%; height: 100%;
+    border: none;
+    pointer-events: none;
+  }
+
+  /* ── Video text overlay ── */
+  #{{ section_id }} .saree-story__video-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 32px 48px;
+    background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  #{{ section_id }} .saree-story__quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: var(--ssv-quote-size);
+    font-style: italic;
+    font-weight: 300;
+    color: #f5e9c8;
+    line-height: 1.5;
+    margin: 0;
+    max-width: 700px;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.6);
+    letter-spacing: 0.02em;
+  }
+  #{{ section_id }} .saree-story__quote-mark {
+    font-size: 1.8em;
+    line-height: 0;
+    vertical-align: -0.3em;
+    color: var(--ssv-gold);
+    opacity: 0.8;
+  }
+
+  /* ── Mute button ── */
+  #{{ section_id }} .saree-story__mute-btn {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    z-index: 10;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.45);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center; justify-content: center;
+    padding: 0;
+    transition: background 0.2s, transform 0.2s;
+    backdrop-filter: blur(6px);
+  }
+  #{{ section_id }} .saree-story__mute-btn:hover {
+    background: rgba(0,0,0,0.7);
+    transform: scale(1.08);
+  }
+  #{{ section_id }} .saree-story__mute-btn svg { width: 18px; height: 18px; }
+
+  /* ── Play indicator ── */
+  #{{ section_id }} .saree-story__play-indicator {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%) scale(0.85);
+    z-index: 5;
+    color: rgba(255,255,255,0.92);
+    width: 72px; height: 72px;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+  }
+  #{{ section_id }} .saree-story__play-indicator.is-visible {
+    opacity: 1;
+    transform: translate(-50%,-50%) scale(1);
+  }
+
+  /* ── Footer ── */
+  #{{ section_id }} .saree-story__footer {
+    max-width: 740px;
+    margin: 0 auto;
+    padding-top: 40px;
+  }
+  #{{ section_id }} .saree-story__divider {
+    color: var(--ssv-gold);
+    width: 280px;
+    margin: 0 auto 28px;
+  }
+  #{{ section_id }} .saree-story__divider svg { width: 100%; height: 24px; }
+
+  #{{ section_id }} .saree-story__body {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    line-height: 1.25;
+    color: var(--ssv-text);
+    opacity: 0.78;
+    margin: 0 0 36px;
+  }
+
+  /* ── CTA ── */
+  #{{ section_id }} .saree-story__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.65rem, 1.2vw, 0.78rem);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ssv-gold);
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 4px;
+    transition: gap 0.3s, opacity 0.2s;
+  }
+  #{{ section_id }} .saree-story__cta:hover { gap: 22px; opacity: 0.75; }
+  #{{ section_id }} .saree-story__cta-arrow { width: 40px; flex-shrink: 0; }
+
+  /* ── Scroll reveal ── */
+  #{{ section_id }} [data-reveal] {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.85s cubic-bezier(.22,.61,.36,1), transform 0.85s cubic-bezier(.22,.61,.36,1);
+  }
+  #{{ section_id }} [data-reveal].is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  #{{ section_id }} [data-reveal]:nth-child(2) { transition-delay: 0.1s; }
+  #{{ section_id }} [data-reveal]:nth-child(3) { transition-delay: 0.2s; }
+  #{{ section_id }} [data-reveal]:nth-child(4) { transition-delay: 0.3s; }
+  #{{ section_id }} [data-reveal]:nth-child(5) { transition-delay: 0.42s; }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    #{{ section_id }} .saree-story__video-overlay { padding: 0 16px 28px; }
+    #{{ section_id }} .saree-story__footer { padding-top: 28px; }
+    #{{ section_id }} { padding-left: 16px; padding-right: 16px; }
+      #{{ section_id }} .saree-story__ornament--top { margin-bottom: 15px; }
+  #{{ section_id }} .saree-story__ornament--bottom { margin-top: 15px; }
+   #{{ section_id }} saree-story__body {
+    font-size: 14px;
+    margin: 0 0 16px;
+   }
+  #{{ section_id }} .saree-story__divider {
+    width: 310px;
+    margin: 0 auto 15px;
+  }
+  }
+</style>
+
+{% comment %} ═══════════════ JAVASCRIPT ═══════════════ {% endcomment %}
+<script>
+(function () {
+  'use strict';
+
+  var SEC_ID      = '{{ section_id }}';
+  var VIDEO_TYPE  = '{{ video_type }}';
+  var THRESHOLD   = {{ section.settings.play_threshold | divided_by: 100.0 }};
+
+  function init() {
+    var section     = document.getElementById(SEC_ID);
+    if (!section) return;
+
+    var stage       = section.querySelector('.saree-story__stage');
+    var poster      = document.getElementById(SEC_ID + '-poster');
+    var video       = document.getElementById(SEC_ID + '-video');
+    var iframeWrap  = document.getElementById(SEC_ID + '-iframe-wrap');
+    var muteBtn     = document.getElementById(SEC_ID + '-mute');
+    var playInd     = document.getElementById(SEC_ID + '-play-indicator');
+    var isMuted     = true;
+    var iframeEl    = null;
+    var ytPlayer    = null;
+    var vimeoPlayer = null;
+
+    /* ─── Reveal animations ─── */
+    var revealEls = section.querySelectorAll('[data-reveal]');
+    var revealObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-revealed');
+          revealObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach(function (el) { revealObs.observe(el); });
+
+    /* ─── Hide poster ─── */
+    function hidePoster() {
+      if (poster) poster.classList.add('is-hidden');
+    }
+
+    /* ─── Play ─── */
+    function playVideo() {
+      hidePoster();
+      if (video) {
+        video.play().catch(function () {});
+        if (playInd) playInd.classList.remove('is-visible');
+      }
+      if (iframeEl && VIDEO_TYPE === 'youtube' && ytPlayer) {
+        try { ytPlayer.playVideo(); } catch(e){}
+      }
+      if (iframeEl && VIDEO_TYPE === 'vimeo' && vimeoPlayer) {
+        try { vimeoPlayer.play(); } catch(e){}
+      }
+    }
+
+    /* ─── Pause ─── */
+    function pauseVideo() {
+      if (video) {
+        video.pause();
+        if (playInd) playInd.classList.add('is-visible');
+      }
+      if (iframeEl && VIDEO_TYPE === 'youtube' && ytPlayer) {
+        try { ytPlayer.pauseVideo(); } catch(e){}
+      }
+      if (iframeEl && VIDEO_TYPE === 'vimeo' && vimeoPlayer) {
+        try { vimeoPlayer.pause(); } catch(e){}
+      }
+    }
+
+    /* ─── Lazy-load iframe ─── */
+    function loadIframe() {
+      if (!iframeWrap || iframeEl) return;
+      iframeEl = document.createElement('iframe');
+      iframeEl.src          = iframeWrap.dataset.src;
+      iframeEl.allow        = 'autoplay; fullscreen';
+      iframeEl.allowFullscreen = true;
+      iframeEl.loading      = 'lazy';
+      iframeWrap.appendChild(iframeEl);
+
+      /* Vimeo API */
+      if (VIDEO_TYPE === 'vimeo') {
+        loadScript('https://player.vimeo.com/api/player.js', function () {
+          if (window.Vimeo) {
+            vimeoPlayer = new Vimeo.Player(iframeEl);
+          }
+        });
+      }
+    }
+
+    /* ─── Viewport IntersectionObserver ─── */
+    var videoObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          /* Load iframe src lazily on first enter */
+          if (iframeWrap && !iframeEl) loadIframe();
+          playVideo();
+        } else {
+          pauseVideo();
+        }
+      });
+    }, { threshold: THRESHOLD });
+
+    videoObs.observe(stage);
+
+    /* ─── Mute toggle ─── */
+    if (muteBtn && video) {
+      muteBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        isMuted = !isMuted;
+        video.muted = isMuted;
+        muteBtn.querySelector('.saree-story__mute-icon--off').style.display = isMuted ? '' : 'none';
+        muteBtn.querySelector('.saree-story__mute-icon--on').style.display  = isMuted ? 'none' : '';
+      });
+    }
+
+    /* ─── Click stage to play/pause ─── */
+    if (stage) {
+      stage.addEventListener('click', function () {
+        if (video) {
+          if (video.paused) { playVideo(); }
+          else              { pauseVideo(); }
+        }
+      });
+    }
+
+    /* ─── Native video: hide poster once playing ─── */
+    if (video) {
+      video.addEventListener('playing', function () {
+        hidePoster();
+        if (playInd) playInd.classList.remove('is-visible');
+      });
+      video.addEventListener('pause', function () {
+        if (playInd) playInd.classList.add('is-visible');
+      });
+    }
+  }
+
+  /* ─── Utility: load external script once ─── */
+  function loadScript(src, cb) {
+    if (document.querySelector('script[src="' + src + '"]')) { if(cb) cb(); return; }
+    var s = document.createElement('script');
+    s.src = src; s.defer = true;
+    if (cb) s.onload = cb;
+    document.head.appendChild(s);
+  }
+
+  /* ─── Boot after DOM ready ─── */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Saree Story Video",
+  "tag": "section",
+  "class": "saree-story-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Text Content"
+    },
+    {
+      "type": "text",
+      "id": "pre_heading",
+      "label": "Pre-heading (small caps above title)",
+      "default": "Est. centuries ago"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Main heading",
+      "default": "The Story of the Saree"
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext below heading",
+      "default": "Six yards of woven heritage — every thread a verse, every drape a poem passed through generations."
+    },
+    {
+      "type": "textarea",
+      "id": "overlay_quote",
+      "label": "Quote overlaid on video",
+      "default": "Where tradition meets the loom, a saree is born — not made."
+    },
+    {
+      "type": "textarea",
+      "id": "body_text",
+      "label": "Body text below video",
+      "default": "From the bustling ghats of Banaras to the sun-baked earth of Kutch, each saree carries the soul of its land — colours drawn from nature, patterns handed down in whispers."
+    },
+    {
+      "type": "header",
+      "content": "🔗 Call to Action"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label",
+      "default": "Explore our collections"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "🎬 Video Source"
+    },
+    {
+      "type": "select",
+      "id": "video_type",
+      "label": "Video type",
+      "options": [
+        { "value": "hosted", "label": "Shopify-hosted video" },
+        { "value": "mp4",    "label": "External MP4 URL" },
+        { "value": "youtube","label": "YouTube" },
+        { "value": "vimeo",  "label": "Vimeo" }
+      ],
+      "default": "hosted"
+    },
+    {
+      "type": "video",
+      "id": "shopify_video",
+      "label": "Shopify video (upload here)",
+      "info": "Only used when Video type = Shopify-hosted"
+    },
+    {
+      "type": "text",
+      "id": "mp4_url",
+      "label": "External MP4 URL",
+      "info": "Only used when Video type = External MP4"
+    },
+    {
+      "type": "text",
+      "id": "youtube_id",
+      "label": "YouTube video ID",
+      "info": "E.g. for youtube.com/watch?v=abc123, enter: abc123"
+    },
+    {
+      "type": "text",
+      "id": "vimeo_id",
+      "label": "Vimeo video ID",
+      "info": "E.g. for vimeo.com/123456789, enter: 123456789"
+    },
+    {
+      "type": "image_picker",
+      "id": "poster_image",
+      "label": "Poster / thumbnail image",
+      "info": "Shown before the video plays. Use a high-quality still from your video."
+    },
+    {
+      "type": "checkbox",
+      "id": "loop",
+      "label": "Loop video",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "▶️ Autoplay Behaviour"
+    },
+    {
+      "type": "range",
+      "id": "play_threshold",
+      "label": "Play when section is % visible",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "default": 40,
+      "unit": "%",
+      "info": "Lower = plays sooner as the section enters the screen"
+    },
+    {
+      "type": "header",
+      "content": "📐 Layout"
+    },
+    {
+      "type": "select",
+      "id": "video_ratio",
+      "label": "Video aspect ratio",
+      "options": [
+        { "value": "16/9",  "label": "16:9 — Landscape (cinema)" },
+        { "value": "4/3",   "label": "4:3 — Classic" },
+        { "value": "21/9",  "label": "21:9 — Ultra-wide cinematic" },
+        { "value": "9/16",  "label": "9:16 — Vertical / Reels" },
+        { "value": "1/1",   "label": "1:1 — Square" }
+      ],
+      "default": "16/9"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max video width (px)",
+      "min": 600,
+      "max": 1800,
+      "step": 40,
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Section padding top (px)",
+      "min": 0,
+      "max": 140,
+      "step": 4,
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Section padding bottom (px)",
+      "min": 0,
+      "max": 140,
+      "step": 4,
+      "default": 80
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section background",
+      "default": "#0f0906"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#e8d9c0"
+    },
+    {
+      "type": "color",
+      "id": "gold_color",
+      "label": "Gold / accent color",
+      "default": "#c9a96e"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Video overlay darkness (%)",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "default": 35,
+      "info": "Controls how dark the gradient on the video text area is"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Saree Story Video",
+      "settings": {
+        "pre_heading": "Est. centuries ago",
+        "heading": "The Story of the Saree",
+        "subtext": "Six yards of woven heritage — every thread a verse, every drape a poem passed through generations.",
+        "overlay_quote": "Where tradition meets the loom, a saree is born — not made.",
+        "body_text": "From the bustling ghats of Banaras to the sun-baked earth of Kutch, each saree carries the soul of its land — colours drawn from nature, patterns handed down in whispers.",
+        "cta_label": "Explore our collections",
+        "video_type": "hosted",
+        "loop": true,
+        "play_threshold": 40,
+        "video_ratio": "16/9",
+        "max_width": 1400,
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "bg_color": "#0f0906",
+        "text_color": "#e8d9c0",
+        "gold_color": "#c9a96e",
+        "overlay_opacity": 35
+      }
+    }
+  ]
+}
+{% endschema %}

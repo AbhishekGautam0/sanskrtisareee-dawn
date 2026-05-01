@@ -1,0 +1,162 @@
+{% style %}
+.section-{{ section.id }} {
+  background: {{ section.settings.bg_color }};
+  padding-top: {{ section.settings.padding_top }}px;
+  padding-bottom: {{ section.settings.padding_bottom }}px;
+  overflow: hidden;
+}
+
+.marquee-wrapper-{{ section.id }} {
+  display: flex;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-track-{{ section.id }} {
+  display: flex;
+  align-items: center;
+  animation: marquee-{{ section.id }} linear infinite;
+  animation-duration: {{ section.settings.speed }}s;
+}
+
+.marquee-item-{{ section.id }} {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 40px;
+}
+
+.marquee-item-{{ section.id }} img {
+  width: {{ section.settings.icon_size }}px;
+  height: auto;
+}
+
+.marquee-text-{{ section.id }} {
+  color: {{ section.settings.text_color }};
+  font-size: {{ section.settings.text_size }}px;
+  font-weight: 500;
+}
+
+@keyframes marquee-{{ section.id }} {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+{% endstyle %}
+
+<div class="section-{{ section.id }}">
+  <div class="marquee-wrapper-{{ section.id }}">
+    <div class="marquee-track-{{ section.id }}">
+      
+      {% for i in (1..2) %}
+        {% for block in section.blocks %}
+          <div class="marquee-item-{{ section.id }}" {{ block.shopify_attributes }}>
+            
+            {% if block.settings.icon != blank %}
+              <img src="{{ block.settings.icon | image_url: width: 100 }}" alt="">
+            {% endif %}
+            
+            <span class="marquee-text-{{ section.id }}">
+              {{ block.settings.text }}
+            </span>
+
+          </div>
+        {% endfor %}
+      {% endfor %}
+
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Icon Marquee",
+  "settings": [
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text Size",
+      "min": 12,
+      "max": 30,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon Size",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Scroll Speed (seconds)",
+      "min": 5,
+      "max": 40,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 20
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Icon + Text",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon Image"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Free Shipping"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Icon Marquee",
+      "blocks": [
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" }
+      ]
+    }
+  ]
+}
+{% endschema %}

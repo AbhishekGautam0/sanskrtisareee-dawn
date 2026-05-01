@@ -1,0 +1,490 @@
+{% style %}
+  .custom-footer-section {
+    padding: 50px 0px;
+    background: #C6A972;
+  }
+  .custom-footer-section .main-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 45px;
+  }
+  .custom-footer-section .top-assets-box {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .custom-footer-section .footer-box-one {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .custom-footer-section .subscribe-footer-box,
+  .custom-footer-section .menu-box-main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .custom-footer-section .footer-logo {
+    width: 100%;
+    max-width:150px;
+  }
+  .custom-footer-section .footer-desc {
+     font-size: 16px;
+     font-weight: 400;
+     color: #FFF;
+     line-height: normal;
+     max-width: 360px;
+   }
+   .custom-footer-section .social-media-box {
+     display: flex;
+     align-items: flex-start;
+     gap: 15px;
+   }
+   .custom-footer-section .menu-list {
+     padding-top: 0.5rem;
+    }
+   .custom-footer-section .subscribe-head,
+   .custom-footer-section .menu-heading {
+     font-size: 18px;
+     font-weight: 600;
+     line-height: normal;
+     text-transform: uppercase;
+     color: #fff;
+   }
+   .custom-footer-section .menu-list a {
+     font-size: 16px;
+     font-weight: 400;
+     line-height: normal;
+     text-transform: capitalize;
+     color: #fff;
+     text-decoration: none;
+   }
+   .custom-footer-section .subscribe-desc {
+     font-size: 16px;
+     font-weight: 400;
+     line-height: normal;
+     color: #fff;
+     max-width: 400px;
+     letter-spacing: 0;
+   }
+   .custom-footer-section .social-icon {
+     max-width: 36px;
+   }
+
+   /* newsletter CSS Start */
+   .custom-footer-section .newsletter-form {
+     margin: 0;
+   }
+   .custom-footer-section .newsletter-form__field-wrapper .field__input:focus-visible {
+     outline: unset;
+     outline-offset: unset;
+     box-shadow: unset;
+   }
+   .custom-footer-section .newsletter-form__field-wrapper .field__input {
+     border-radius: 32px;
+     border: 1px solid #fff;
+     font-size: 14px;
+     font-weight: 400;
+     line-height: normal;
+     text-transform: none;
+     color: #fff;
+     background: transparent;
+    }
+   .custom-footer-section .field:after {
+    content: unset;
+   }
+   .custom-footer-section .Submit-btn {
+     color: #000;
+     text-transform: uppercase;
+     font-size: 14px;
+     font-weight: bold;
+     background: #FCF5E6;
+     height: 4.6rem;
+     width: fit-content;
+     padding: 0 25px;
+     border-radius: 32px;
+   }
+   .custom-footer-section .field__label {
+     font-size: 14px;
+     font-weight: 400;
+     line-height: 1.6;
+     text-transform: capitalize;
+     color: #fff;
+   }
+   .custom-footer-section .list-social {
+    justify-content: flex-start;
+   }
+   .custom-footer-section .list-social .icon {
+    color: #fff;
+   }
+
+   /* NewsLetter CSS End */
+
+   .custom-footer-section .main-bottom-box {
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+   }
+   .custom-footer-section .payment-cards-image {
+        width: 100%;
+        max-width: 350px;
+   }
+   .custom-footer-section .copyright__content a,
+   .custom-footer-section .copyright__content {
+     color: #fff;
+     font-size: 14px;
+     font-weight: 400;
+     line-height: normal;
+     text-decoration: none;
+   }
+
+   .custom-footer-section .footer-box-one {
+     width: 28%;
+   }
+   .custom-footer-section .menu-box-main {
+     width: 16%;
+   }
+   .custom-footer-section .subscribe-footer-box {
+     width: 28%;
+   }
+
+@media(max-width: 1150px) {
+    .custom-footer-section .subscribe-head, 
+    .custom-footer-section .menu-heading {
+        font-size: 18px;
+    }
+    .custom-footer-section .footer-desc {
+        font-size: 14px;
+    }
+    .custom-footer-section .payment-cards-image {
+     width: 100%;
+     max-width: 290px;
+    }
+    .custom-footer-section .subscribe-footer-box {
+     width: 30%;
+    }
+}
+@media(max-width: 768px) {
+    .custom-footer-section .footer-box-one {
+     width: 48%;
+    }
+    .custom-footer-section .top-assets-box {
+     flex-wrap: wrap;
+     row-gap: 20px;
+    }
+    .custom-footer-section .subscribe-footer-box {
+     width: 50%;
+    }
+}
+
+@media(max-width: 550px) {
+    .custom-footer-section .subscribe-footer-box,
+    .custom-footer-section .footer-box-one {
+     width: 100%;
+    }
+    .custom-footer-section .menu-box-main {
+     width: 100%;
+    }
+    .custom-footer-section .main-bottom-box {
+     flex-direction: column-reverse;
+     gap: 15px;
+    }
+    .custom-footer-section .menu-box-main {
+      gap: 0;
+    }
+    .custom-footer-section .menu-box-main {
+      border-bottom: 1px solid #FFF;
+      width: 97%;
+      padding-bottom: 10px;
+      position: relative;
+    }
+    .custom-footer-section .menu-box {
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+      max-height: 0;
+    }
+    .custom-footer-section .menu-heading:after {
+      content: ' ';
+      position: absolute;
+      background: url(https://cdn.shopify.com/s/files/1/0652/9944/7977/files/Rectangle_34.png?v=1754916431);
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      right: 10px;
+      top: 5px;
+      right: 10px;
+      width: 12px;
+      height: 12px;
+      z-index: 2;
+      filter: invert(1);
+    }
+    .custom-footer-section .menu-heading.active:after {
+      content: "";
+      position: absolute;
+      background-size: cover;
+      background-position: center;
+      background: url(https://cdn.shopify.com/s/files/1/0652/9944/7977/files/Rectangle_34.png?v=1754916431);
+      background-size: contain;
+      background-position: center;
+      z-index: 2;
+      position: absolute;
+      transform: rotate(180deg);
+      right: 10px;
+      background-repeat: no-repeat;
+      z-index: 2;
+      filter: invert(1);
+    }
+    .custom-footer-section .payment-cards-image {
+      width: 100%;
+      max-width: 350px;
+    }
+    .custom-footer-section .footer-desc {
+      max-width: 100%;
+    }
+    .custom-footer-section .footer-desc,
+    .custom-footer-section .copyright__content a, 
+    .custom-footer-section .copyright__content {
+      font-size: 16px;
+      letter-spacing: 0;
+    }
+    .custom-footer-section .menu-box-main.one {
+      margin: 20px 0px 0;
+    }
+    .custom-footer-section .menu-box-main.two {
+      margin: 0px 0px 5px;
+    }
+
+}
+{% endstyle %}
+
+<section class="custom-footer-section">
+  <div class="page-width">
+    <div class="main-wrapper">
+      <div class="top-assets-box">
+        <div class="footer-box-one">
+          <a href="/">
+            <img class="footer-logo" height="" width="" src="{{ section.settings.logo | img_url: 'master' }}" alt="Main Logo">
+          </a>
+          <div class="footer-desc">{{ section.settings.top_desc }}</div>
+          {% render 'social-icons',
+    class: 'my-class'
+  %}
+          <div class="social-media-box">
+            {% for block in section.blocks %}
+              <a href="{{ block.settings.url }}">
+                <img class="social-icon" height="" width="" src="{{ block.settings.image | img_url: 'master' }}" alt="Social Media Icon">
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="menu-box-main one">
+          <span class="menu-heading">{{ section.settings.menu_text1 }}</span>
+          <div class="menu-box one">
+            {% for link in section.settings.menu1.links %}
+              <div class="menu-list">
+                <a href="{{ link.url }}">{{ link.title }}</a>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="menu-box-main two">
+          <span class="menu-heading">{{ section.settings.menu_text2 }}</span>
+          <div class="menu-box two">
+            {% for link in section.settings.menu2.links %}
+              <div class="menu-list">
+                <a href="{{ link.url }}">{{ link.title }}</a>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="subscribe-footer-box">
+          <h4 class="subscribe-head">{{ section.settings.newsletter_head }}</h4>
+          <div class="subscribe-desc">{{ section.settings.newsletter_desc }}</div>
+          <div class="custom-footer-form">
+            {%- form 'customer', id: 'ContactFooter', class: 'footer__newsletter newsletter-form' -%}
+              <input type="hidden" name="contact[tags]" value="newsletter">
+              <div class="newsletter-form__field-wrapper">
+                <div class="field">
+                  <input
+                    id="NewsletterForm--{{ section.id }}"
+                    type="email"
+                    name="contact[email]"
+                    class="field__input"
+                    value="{{ form.email }}"
+                    aria-required="true"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    autocomplete="email"
+                    {% if form.errors %}
+                      autofocus
+                      aria-invalid="true"
+                      aria-describedby="ContactFooter-error"
+                    {% elsif form.posted_successfully? %}
+                      aria-describedby="ContactFooter-success"
+                    {% endif %}
+                    placeholder="{{ 'newsletter.label' | t }}"
+                    required
+                  >
+                  <label class="field__label" for="NewsletterForm--{{ section.id }}">
+                    E-mail Address
+                  </label>
+                  <button
+                    type="submit"
+                    class="Submit-btn field__button"
+                    name="commit"
+                    id="Subscribe"
+                    aria-label="{{ 'newsletter.button_label' | t }}"
+                  >
+                    Subscribe
+                  </button>
+                </div>
+                {%- if form.errors -%}
+                  <small class="newsletter-form__message form__message" id="ContactFooter-error">
+                    <span class="svg-wrapper">
+                      {{- 'icon-error.svg' | inline_asset_content -}}
+                    </span>
+                    {{- form.errors.translated_fields.email | capitalize }}
+                    {{ form.errors.messages.email -}}
+                  </small>
+                {%- endif -%}
+              </div>
+              {%- if form.posted_successfully? -%}
+                <h3
+                  class="newsletter-form__message newsletter-form__message--success form__message"
+                  id="ContactFooter-success"
+                  tabindex="-1"
+                  autofocus
+                >
+                  <span class="svg-wrapper">
+                    {{- 'icon-success.svg' | inline_asset_content -}}
+                  </span>
+                  {{- 'newsletter.success' | t }}
+                </h3>
+              {%- endif -%}
+            {%- endform -%}
+          </div>
+        </div>
+      </div>
+      <div class="main-bottom-box">
+        <small class="copyright__content"
+        >Copyright &copy; {{ 'now' | date: '%Y' }}, {{ shop.name | link_to: routes.root_url -}}
+      </small>
+        <img class="payment-cards-image" height="" width="" src="https://cdn.shopify.com/s/files/1/0652/9944/7977/files/Group_26086248.png?v=1754977101" loading="lazy" alt="payment Cards">
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const triggerElements = document.querySelectorAll('.menu-heading, .menu-box-main');
+
+    triggerElements.forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        // Find the next sibling .menu-box
+        const currentBox = trigger.nextElementSibling;
+        if (!currentBox || !currentBox.classList.contains('menu-box')) return;
+
+        const isActive = currentBox.classList.contains('active');
+
+        // Close all boxes
+        document.querySelectorAll('.menu-box').forEach((box) => {
+          box.classList.remove('active');
+          box.style.maxHeight = null;
+        });
+
+        // Remove active class from all triggers
+        triggerElements.forEach((el) => el.classList.remove('active'));
+
+        // Open the clicked one if it wasn't active
+        if (!isActive) {
+          currentBox.classList.add('active');
+          currentBox.style.maxHeight = currentBox.scrollHeight + 'px';
+          trigger.classList.add('active');
+        }
+      });
+    });
+
+    // Open the first one by default
+    const firstTrigger = triggerElements[0];
+    const firstBox = firstTrigger?.nextElementSibling;
+    if (firstBox && firstBox.classList.contains('menu-box')) {
+      firstTrigger.classList.add('active');
+      firstBox.classList.add('active');
+      firstBox.style.maxHeight = firstBox.scrollHeight + 'px';
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Custom Footer Section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "text",
+      "id": "top_desc",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "menu_text1",
+      "label": "Menu Heading"
+    },
+    {
+      "type": "link_list",
+      "id": "menu1",
+      "label": "Menu 1"
+    },
+    {
+      "type": "text",
+      "id": "menu_text2",
+      "label": "Menu Heading"
+    },
+    {
+      "type": "link_list",
+      "id": "menu2",
+      "label": "Menu 2"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_head",
+      "label": "Newsletter Heading"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_desc",
+      "label": "Newsletter Description"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "block",
+      "name": "Social Media",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Icon"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Social media URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Footer Section",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

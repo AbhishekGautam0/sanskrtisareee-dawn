@@ -1,0 +1,993 @@
+{% comment %}
+  ┌─────────────────────────────────────────────────────────────┐
+  │   OUR JOURNEY TIMELINE                                      │
+  │   Shopify Dawn Theme                                        │
+  │                                                             │
+  │   Desktop: Alternating left / right layout                  │
+  │   · Central vertical line                                   │
+  │   · Year + dot on centre line                               │
+  │   · Odd items: year left, content right                     │
+  │   · Even items: content left, year right                    │
+  │                                                             │
+  │   Mobile: Single column (Image 2 layout)                    │
+  │   · Left vertical line with dot                             │
+  │   · Year → Title → Description stacked                      │
+  │                                                             │
+  │   Schema: colors, typography, spacing, line style           │
+  └─────────────────────────────────────────────────────────────┘
+{% endcomment %}
+
+{%- liquid
+  assign heading_font = section.settings.heading_font
+  assign body_font    = section.settings.body_font
+  assign year_font    = section.settings.year_font
+-%}
+
+<style>
+/* ============================================================
+   CSS VARIABLES
+   ============================================================ */
+#shopify-section-{{ section.id }} {
+  --tj-bg:            {{ section.settings.bg_color }};
+  --tj-accent:        {{ section.settings.accent_color }};
+  --tj-line:          {{ section.settings.line_color }};
+  --tj-dot-color:     {{ section.settings.dot_color }};
+  --tj-dot-size:      {{ section.settings.dot_size }}px;
+  --tj-line-width:    {{ section.settings.line_width }}px;
+  --tj-year-color:    {{ section.settings.year_color }};
+  --tj-title-color:   {{ section.settings.title_color }};
+  --tj-body-color:    {{ section.settings.body_color }};
+  --tj-eyebrow-color: {{ section.settings.eyebrow_color }};
+  --tj-heading-color: {{ section.settings.section_heading_color }};
+}
+
+/* ============================================================
+   SECTION WRAPPER
+   ============================================================ */
+.tj-section {
+  background: var(--tj-bg);
+  padding: {{ section.settings.pad_top }}px {{ section.settings.pad_h }}px {{ section.settings.pad_bottom }}px;
+}
+
+.tj-inner {
+  max-width: {{ section.settings.max_width }}px;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   SECTION HEADER
+   ============================================================ */
+.tj-header {
+  text-align: {{ section.settings.header_align }};
+  margin-bottom: {{ section.settings.header_mb }}px;
+}
+
+.tj-eyebrow {
+  font-family: {{ body_font.family }}, sans-serif;
+  font-size: {{ section.settings.eyebrow_size }}px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--tj-eyebrow-color);
+  margin: 0 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tj-eyebrow::before,
+.tj-eyebrow::after {
+  content: '';
+  display: {% if section.settings.header_align == 'center' %}block{% else %}none{% endif %};
+  width: 24px;
+  height: 1px;
+  background: var(--tj-accent);
+}
+
+.tj-section-heading {
+  font-family: {{ heading_font.family }}, serif;
+  font-size: {{ section.settings.section_heading_size }}px;
+  font-weight: {{ section.settings.heading_weight }};
+  color: var(--tj-heading-color);
+  margin: 0 0 14px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.tj-section-sub {
+  font-family: {{ body_font.family }}, sans-serif;
+  font-size: {{ section.settings.section_sub_size }}px;
+  color: var(--tj-body-color);
+  margin: 0 auto;
+  line-height: 1.65;
+  max-width: 560px;
+}
+
+/* ============================================================
+   TIMELINE WRAPPER — the vertical centre line lives here
+   ============================================================ */
+.tj-timeline {
+  position: relative;
+  padding: {{ section.settings.timeline_pad_top }}px 0 {{ section.settings.timeline_pad_bottom }}px;
+}
+
+/* Central vertical line */
+.tj-timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--tj-line-width);
+  background: var(--tj-line);
+  {% unless section.settings.show_line %} display: none; {% endunless %}
+}
+
+/* ============================================================
+   SINGLE TIMELINE ITEM
+   ============================================================ */
+.tj-item {
+  display: grid;
+  grid-template-columns: 1fr {{ section.settings.centre_col_width }}px 1fr;
+  align-items: center;
+  margin-bottom: {{ section.settings.item_gap }}px;
+  position: relative;
+}
+
+.tj-item:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================================
+   CENTRE COLUMN — dot + year
+   ============================================================ */
+.tj-centre {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+/* The dot */
+.tj-dot {
+  width: var(--tj-dot-size);
+  height: var(--tj-dot-size);
+  border-radius: 50%;
+  background: var(--tj-dot-color);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 3;
+  display: block !important;
+  {% if section.settings.dot_ring %}
+  box-shadow: 0 0 0 4px var(--tj-bg), 0 0 0 6px {{ section.settings.dot_ring_color }};
+  {% endif %}
+}
+
+/* Year label beside the dot — rendered in left/right cell, not centre */
+.tj-year {
+  font-family: {{ year_font.family }}, serif;
+  font-size: {{ section.settings.year_size }}px;
+  font-weight: {{ section.settings.year_weight }};
+  color: var(--tj-year-color);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+/* ============================================================
+   LEFT & RIGHT CONTENT CELLS
+   ============================================================ */
+.tj-cell {
+  padding: {{ section.settings.cell_pad_v }}px {{ section.settings.cell_pad_h }}px;
+}
+
+.tj-cell--empty {
+  /* placeholder for the opposite side */
+}
+
+/* Odd items: year on left, content on right */
+.tj-item--odd .tj-cell--left {
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.tj-item.tj-item--even .tj-item-desc {
+  margin: 0 0 0 auto;
+}
+.tj-item--odd .tj-cell--right {
+  text-align: left;
+}
+
+/* Even items: content on left, year on right */
+.tj-item--even .tj-cell--left {
+  text-align: right;
+}
+
+.tj-item--even .tj-cell--right {
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+/* Content block */
+.tj-content {
+  display: flex;
+  flex-direction: column;
+  gap: {{ section.settings.content_gap }}px;
+}
+
+.tj-item-title {
+  font-family: {{ heading_font.family }}, serif;
+  font-size: {{ section.settings.item_title_size }}px;
+  font-weight: {{ section.settings.item_title_weight }};
+  color: var(--tj-title-color);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.tj-item-desc {
+  font-family: {{ body_font.family }}, sans-serif;
+  font-size: {{ section.settings.item_desc_size }}px;
+  font-weight: 400;
+  color: var(--tj-body-color);
+  margin: 0;
+  line-height: 1.65;
+  max-width: {{ section.settings.desc_max_width }}px;
+}
+
+/* Right-aligned content — desc aligns right too */
+.tj-item--odd .tj-cell--left .tj-item-desc {
+  margin-left: auto;
+}
+
+/* ============================================================
+   CONNECTOR LINE from dot to content (short horizontal dash)
+   ============================================================ */
+{% if section.settings.show_connector %}
+.tj-item--odd  .tj-cell--left::after,
+.tj-item--even .tj-cell--right::before {
+  content: '';
+  display: block;
+  width: {{ section.settings.connector_length }}px;
+  height: 1px;
+  background: var(--tj-line);
+  opacity: 0.4;
+  flex-shrink: 0;
+  margin: {% if section.settings.show_connector %}0 0 0 12px{% else %}0{% endif %};
+}
+
+.tj-item--odd  .tj-cell--left { gap: 0; }
+.tj-item--even .tj-cell--right { gap: 0; }
+{% endif %}
+
+/* ============================================================
+   MOBILE — single column (Image 2 layout)
+   ============================================================ */
+@media (max-width: {{ section.settings.mobile_breakpoint }}px) {
+
+  /* Remove centre line from ::before — add a left-side line instead */
+  .tj-timeline::before {
+    left: {{ section.settings.mobile_dot_offset }}px;
+    transform: none;
+  }
+
+  .tj-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: {{ section.settings.mobile_dot_offset | plus: 28 }}px;
+    margin-bottom: {{ section.settings.mobile_item_gap }}px;
+    position: relative;
+  }
+
+  /* dot repositioned to the left line */
+  .tj-centre {
+    position: absolute;
+    left: {{ section.settings.mobile_dot_offset | minus: section.settings.dot_size | divided_by: 2 | round }}px;
+    top: 4px;
+    flex-direction: row;
+  }
+
+  /* hide year from centre column on mobile */
+  .tj-centre .tj-year { display: none; }
+
+  /* hide the "opposite" empty cell entirely */
+  .tj-cell--empty { display: none; }
+
+  /* both content cells become full-width stacked */
+  .tj-item--odd .tj-cell--left,
+  .tj-item--even .tj-cell--right {
+    display: none; /* year cell — shown as separate element */
+  }
+
+  .tj-cell--right,
+  .tj-item--even .tj-cell--left {
+    text-align: left !important;
+    padding: 0;
+    width: 100%;
+  }
+
+  /* Re-show content on odd (right cell) and even (left cell) */
+  .tj-item--odd  .tj-cell--right,
+  .tj-item--even .tj-cell--left {
+    display: block;
+  }
+
+  /* Year shown as small text above title on mobile */
+  .tj-mobile-year {
+    display: block;
+    font-family: {{ year_font.family }}, serif;
+    font-size: {{ section.settings.mobile_year_size }}px;
+    font-weight: {{ section.settings.year_weight }};
+    color: var(--tj-year-color);
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+  }
+
+  .tj-item-title {
+    font-size: {{ section.settings.item_title_size | times: 0.85 | round }}px;
+  }
+
+  .tj-item-desc {
+    max-width: 100%;
+  }
+
+  {% if section.settings.show_connector %}
+  .tj-item--odd  .tj-cell--left::after,
+  .tj-item--even .tj-cell--right::before {
+    display: none;
+  }
+  {% endif %}
+
+  .tj-section {
+    padding-left: {{ section.settings.mobile_pad_h }}px;
+    padding-right: {{ section.settings.mobile_pad_h }}px;
+  }
+  .tj-dot {
+    margin-left: 9.5px;
+  }
+  .tj-section-heading {
+    font-size: {{ section.settings.section_heading_size | times: 0.72 | round }}px;
+  }
+}
+
+/* Desktop: hide mobile year */
+@media (min-width: {{ section.settings.mobile_breakpoint | plus: 1 }}px) {
+  .tj-mobile-year { display: none; }
+}
+</style>
+
+<section class="tj-section" id="shopify-section-{{ section.id }}-wrap">
+  <div class="tj-inner">
+
+    {%- comment -%} ── Section Header ──────────────────────────── {%- endcomment -%}
+    {% if section.settings.show_header %}
+      <div class="tj-header">
+        {% if section.settings.eyebrow != blank %}
+          <p class="tj-eyebrow">{{ section.settings.eyebrow }}</p>
+        {% endif %}
+        {% if section.settings.section_heading != blank %}
+          <h2 class="tj-section-heading">{{ section.settings.section_heading }}</h2>
+        {% endif %}
+        {% if section.settings.section_sub != blank %}
+          <p class="tj-section-sub">{{ section.settings.section_sub }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {%- comment -%} ── Timeline ────────────────────────────────── {%- endcomment -%}
+    <div class="tj-timeline">
+      {% for block in section.blocks %}
+        {% if block.type == 'milestone' %}
+          {% assign is_odd = forloop.index | modulo: 2 %}
+          {% if is_odd == 1 %}
+            {% assign item_class = 'tj-item--odd' %}
+          {% else %}
+            {% assign item_class = 'tj-item--even' %}
+          {% endif %}
+
+          <div class="tj-item {{ item_class }}" {{ block.shopify_attributes }}>
+
+            {%- comment -%}
+              ODD  (1,3,5…): year LEFT  | dot CENTRE | content RIGHT
+              EVEN (2,4,6…): content LEFT | dot CENTRE | year RIGHT
+            {%- endcomment -%}
+
+            {% if is_odd == 1 %}
+
+              {%- comment -%} LEFT: Year {%- endcomment -%}
+              <div class="tj-cell tj-cell--left">
+                <span class="tj-year">{{ block.settings.year }}</span>
+              </div>
+
+              {%- comment -%} CENTRE: Dot {%- endcomment -%}
+              <div class="tj-centre">
+                <div class="tj-dot"></div>
+              </div>
+
+              {%- comment -%} RIGHT: Content {%- endcomment -%}
+              <div class="tj-cell tj-cell--right">
+                <div class="tj-content">
+                  <span class="tj-mobile-year">{{ block.settings.year }}</span>
+                  {% if block.settings.title != blank %}
+                    <h3 class="tj-item-title">{{ block.settings.title }}</h3>
+                  {% endif %}
+                  {% if block.settings.description != blank %}
+                    <p class="tj-item-desc">{{ block.settings.description }}</p>
+                  {% endif %}
+                </div>
+              </div>
+
+            {% else %}
+
+              {%- comment -%} LEFT: Content {%- endcomment -%}
+              <div class="tj-cell tj-cell--left">
+                <div class="tj-content">
+                  <span class="tj-mobile-year">{{ block.settings.year }}</span>
+                  {% if block.settings.title != blank %}
+                    <h3 class="tj-item-title">{{ block.settings.title }}</h3>
+                  {% endif %}
+                  {% if block.settings.description != blank %}
+                    <p class="tj-item-desc">{{ block.settings.description }}</p>
+                  {% endif %}
+                </div>
+              </div>
+
+              {%- comment -%} CENTRE: Dot {%- endcomment -%}
+              <div class="tj-centre">
+                <div class="tj-dot"></div>
+              </div>
+
+              {%- comment -%} RIGHT: Year {%- endcomment -%}
+              <div class="tj-cell tj-cell--right">
+                <span class="tj-year">{{ block.settings.year }}</span>
+              </div>
+
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Journey Timeline",
+  "tag": "section",
+  "class": "section-journey-timeline",
+  "max_blocks": 10,
+  "settings": [
+
+    {
+      "type": "header",
+      "content": " Section Header"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_header",
+      "label": "Show Section Header",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "header_align",
+      "label": "Header Alignment",
+      "options": [
+        { "value": "left",   "label": "Left"   },
+        { "value": "center", "label": "Center" },
+        { "value": "right",  "label": "Right"  }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Label",
+      "default": "Since 1974"
+    },
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Section Heading",
+      "default": "The Journey"
+    },
+    {
+      "type": "textarea",
+      "id": "section_sub",
+      "label": "Section Subheading",
+      "default": "Five decades of heritage, craft and passion."
+    },
+    {
+      "type": "range",
+      "id": "section_heading_size",
+      "min": 28,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading Size",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "section_sub_size",
+      "min": 13,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Subheading Size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "min": 9,
+      "max": 14,
+      "step": 1,
+      "unit": "px",
+      "label": "Eyebrow Size",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "header_mb",
+      "min": 24,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Header Bottom Margin",
+      "default": 64
+    },
+
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#f5f0e8"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent Color",
+      "default": "#8b6332"
+    },
+    {
+      "type": "color",
+      "id": "section_heading_color",
+      "label": "Section Heading Color",
+      "default": "#3d1a0a"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow Color",
+      "default": "#8b6332"
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Body / Description Color",
+      "default": "#6b5c4e"
+    },
+    {
+      "type": "color",
+      "id": "year_color",
+      "label": "Year Number Color",
+      "default": "#8b6332"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Milestone Title Color",
+      "default": "#1a0f06"
+    },
+
+    {
+      "type": "header",
+      "content": "Timeline Line & Dot"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_line",
+      "label": "Show Vertical Line",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "line_color",
+      "label": "Line Color",
+      "default": "#c9b89a"
+    },
+    {
+      "type": "range",
+      "id": "line_width",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "Line Width",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "dot_color",
+      "label": "Dot Color",
+      "default": "#8b6332"
+    },
+    {
+      "type": "range",
+      "id": "dot_size",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Dot Size",
+      "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "dot_ring",
+      "label": "Show Ring Around Dot",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "dot_ring_color",
+      "label": "Dot Ring Color",
+      "default": "#c9b89a"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_connector",
+      "label": "Show Horizontal Connector Line",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "connector_length",
+      "min": 16,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Connector Length",
+      "default": 32
+    },
+
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Heading / Title Font",
+      "default": "playfair_display_n4"
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Section Heading Weight",
+      "options": [
+        { "value": "300", "label": "Light"     },
+        { "value": "400", "label": "Regular"   },
+        { "value": "500", "label": "Medium"    },
+        { "value": "700", "label": "Bold"      }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "font_picker",
+      "id": "year_font",
+      "label": "Year Number Font",
+      "default": "playfair_display_n4"
+    },
+    {
+      "type": "range",
+      "id": "year_size",
+      "min": 28,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Year Font Size (Desktop)",
+      "default": 52
+    },
+    {
+      "type": "select",
+      "id": "year_weight",
+      "label": "Year Font Weight",
+      "options": [
+        { "value": "300", "label": "Light"   },
+        { "value": "400", "label": "Regular" },
+        { "value": "700", "label": "Bold"    }
+      ],
+      "default": "300"
+    },
+    {
+      "type": "range",
+      "id": "item_title_size",
+      "min": 14,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "label": "Milestone Title Size",
+      "default": 22
+    },
+    {
+      "type": "select",
+      "id": "item_title_weight",
+      "label": "Milestone Title Weight",
+      "options": [
+        { "value": "400", "label": "Regular"   },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold"      }
+      ],
+      "default": "700"
+    },
+  
+    {
+      "type": "range",
+      "id": "item_desc_size",
+      "min": 13,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Description Font Size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "desc_max_width",
+      "min": 200,
+      "max": 520,
+      "step": 10,
+      "unit": "px",
+      "default": 360,
+      "label": "Description Max Width",
+    },
+
+    {
+      "type": "header",
+      "content": " Layout & Spacing"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 800,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1200,
+      "label": "Section Max Width",
+    },
+    {
+      "type": "range",
+      "id": "centre_col_width",
+      "min": 40,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64,
+      "label": "Centre Column Width (dot area)",
+    },
+    {
+      "type": "range",
+      "id": "item_gap",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60,
+      "label": "Gap Between Milestones",
+    },
+    {
+      "type": "range",
+      "id": "cell_pad_v",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16,
+      "label": "Cell Vertical Padding",
+    },
+    {
+      "type": "range",
+      "id": "cell_pad_h",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 32,
+      "label": "Cell Horizontal Padding",
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 10,
+      "label": "Gap: Title → Description",
+    },
+    {
+      "type": "range",
+      "id": "timeline_pad_top",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "label": "Timeline Top Padding",
+    },
+    {
+      "type": "range",
+      "id": "timeline_pad_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 0,
+      "label": "Timeline Bottom Padding",
+    },
+    {
+      "type": "range",
+      "id": "pad_top",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 80,
+      "label": "Section Top Padding",
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 80,
+      "label": "Section Bottom Padding",
+    },
+    {
+      "type": "range",
+      "id": "pad_h",
+      "min": 16,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 32,
+      "label": "Section Horizontal Padding",
+    },
+
+    {
+      "type": "header",
+      "content": "Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_breakpoint",
+      "min": 750,
+      "max": 900,
+      "step": 10,
+      "unit": "px",
+      "default": 770,
+      "label": "Mobile Breakpoint",
+    },
+    {
+      "type": "range",
+      "id": "mobile_dot_offset",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 18,
+      "label": "Dot / Line Left Offset (Mobile)",
+    },
+    {
+      "type": "range",
+      "id": "mobile_year_size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Year Size (Mobile)",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "mobile_item_gap",
+      "min": 24,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap Between Items (Mobile)",
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "mobile_pad_h",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Horizontal Padding (Mobile)",
+      "default": 24
+    }
+  ],
+
+  "blocks": [
+    {
+      "type": "milestone",
+      "name": "Milestone",
+      "settings": [
+        {
+          "type": "text",
+          "id": "year",
+          "label": "Year",
+          "default": "1974"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Milestone Title",
+          "default": "The First Loom"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Our founder established a single handloom unit in Bhelupur, dedicated to reviving the Shikargarh technique."
+        }
+      ]
+    }
+  ],
+
+  "presets": [
+    {
+      "name": "Journey Timeline",
+      "blocks": [
+        {
+          "type": "milestone",
+          "settings": {
+            "year": "1974",
+            "title": "The First Loom",
+            "description": "Our founder established a single handloom unit in Bhelupur, dedicated to reviving the Shikargarh technique."
+          }
+        },
+        {
+          "type": "milestone",
+          "settings": {
+            "year": "1988",
+            "title": "Royal Patronage",
+            "description": "SanskritiSaree becomes the preferred weaver for regional heritage houses across Rajasthan and UP."
+          }
+        },
+        {
+          "type": "milestone",
+          "settings": {
+            "year": "2010",
+            "title": "Global Recognition",
+            "description": "SanskritiSaree showcased at the Paris Heritage Exhibition, bringing Banaras silk to the international haute couture stage."
+          }
+        },
+        {
+          "type": "milestone",
+          "settings": {
+            "year": "2024",
+            "title": "Digital Atelier",
+            "description": "Launching our virtual private viewing experience, connecting global connoisseurs directly with the loom."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

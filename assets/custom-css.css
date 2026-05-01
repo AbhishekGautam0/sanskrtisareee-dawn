@@ -1,0 +1,165 @@
+
+
+.svg-wrapper .cutom-icon {
+  fill: #000 !important;
+  width: 2.2rem !important;
+}
+svg.icon.icon-account.custom-icon {
+    fill: #000;
+}
+.card-wrapper .jdgm-preview-badge .jdgm-star {
+  color: #ffffff !important;
+}
+body,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+span {
+  margin: 0;
+  letter-spacing: 0;
+}
+body,
+p,
+span {
+  margin: 0;
+  letter-spacing: 0;
+}
+.splide__pagination__page.is-active {
+  background: #c6a972; 
+}
+.splide__pagination__page {
+ background: #b4a587;
+}
+/* .temp-index .header__heading-logo {
+  filter: invert(1);
+} */
+img {
+  max-width: 100%;
+}
+a {
+  text-decoration: none;
+}
+body {
+  letter-spacing: 0 !important;
+}
+
+.product .price-per-item__container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.product .quantity:after {
+    border-radius: 50px;
+}
+.product-grid .card__heading,
+.related-products .card__heading {
+    font-size: 18px;
+}
+product-grid. .price>*,
+.related-products .price>* {
+    font-size: 14px;
+}
+    .whatsapp-order-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #25D366;
+    color: #ffffff;
+    padding: 12px 16px;
+    border-radius: 56px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .whatsapp-order-btn:hover {
+    background: #1ebe5d;
+    transform: translateY(-1px);
+  }
+
+  .whatsapp-order-btn svg {
+    display: block;
+  }
+  .product .product__accordion .accordion__content {
+    padding: 0 1rem 0rem 0px;
+    font-size: 14px;
+  }
+  .product .accordion__title {
+    font-size: 16px;
+  }
+
+  @media(min-width: 749px) {
+    
+    .temp-index .header {
+      background: transparent;
+      left: 50%;
+      transform: translate(-50%, 0px);
+    }
+    .temp-index .header svg:not(.header__submenu svg) {
+      filter: invert(1);
+    }
+    .temp-index
+      .shopify-section-header-sticky.shopify-section-header-hidden
+      sticky-header,
+    .temp-index
+      .shopify-section-header-sticky.shopify-section-header-hidden
+      .header {
+      display: none;
+    }
+    .temp-index .shopify-section-header-sticky sticky-header,
+    .temp-index .shopify-section-header-sticky .header {
+      display: grid;
+    }
+    .temp-index .scrolled-past-header.shopify-section-header-sticky.animate header svg {
+      filter: unset;
+    }
+    .temp-index .scrolled-past-header.shopify-section-header-sticky.animate header,
+    .temp-index .scrolled-past-header.shopify-section-header-sticky.animate sticky-header {
+      background: #f8f3ed;
+    }
+    .temp-index .header,
+    .temp-index sticky-header {
+      position: absolute;
+      width: 100%;
+      max-width: 100%;
+      margin: 0 auto;
+    } 
+    .temp-index .scrolled-past-header.shopify-section-header-sticky.animate .header__menu-item span {
+      color: #000;
+    }
+    .temp-index .shopify-section-group-header-group.section-header .header__menu-item span {
+      color: #fff;
+    }
+    .temp-index .shopify-section-group-header-group.section-header .header__menu-item span {
+      color: #fff;
+    }
+    .temp-index .shopify-section-group-header-group.section-header 
+    .header__submenu .header__menu-item span {
+      color: initial; 
+    }
+  }
+  @media(max-width: 650px) {
+    .whatsapp-order-btn {
+      width: 100%;
+      margin-top: 15px;
+    }
+    .product-grid .card__heading,
+    .related-products .card__heading {
+      font-size: 15px;
+    }
+    .product-grid .price,
+    .related-products .price,
+    product-grid. .price>*,
+    .related-products .price>* {
+      font-size: 12px;
+    }
+    .temp-index .header .header__submenu svg,
+    .temp-index .header .menu-drawer__navigation svg {
+      filter: none;
+    }
+  }

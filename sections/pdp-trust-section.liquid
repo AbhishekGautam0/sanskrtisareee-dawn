@@ -1,0 +1,176 @@
+{% schema %}
+{
+  "name": "Fabric Features Banner",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f5f0e8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#a47c48"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature Block",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Feature Icon"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Feature Title",
+          "default": "PREMIUM FABRIC"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Feature Description",
+          "default": "Pure Mulberry Silk base with 100% real zari work."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Fabric Features Banner",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "title": "PREMIUM FABRIC",
+            "description": "Pure Mulberry Silk base with 100% real zari work."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "LIGHTWEIGHT",
+            "description": "Ethereal lightness for hours of effortless wear."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "WEDDING WEAR",
+            "description": "Designed for the most celebrated moments in life."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "EASY DRAPING",
+            "description": "Structural weave ensures perfect pleats every time."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+{% assign block_count = section.blocks.size %}
+
+<section 
+  class="fabric-features" 
+  style="background-color: {{ section.settings.background_color }}; color: {{ section.settings.text_color }};"
+>
+  <div class="page-width">
+    
+    <div class="features-grid {% if block_count == 3 %}three{% endif %}">
+      
+      {% for block in section.blocks %}
+        <div class="feature-item">
+
+          {% if block.settings.icon != blank %}
+            <img 
+              src="{{ block.settings.icon | image_url: width: 64 }}"
+              alt="{{ block.settings.title | escape }}"
+              width="64"
+              height="64"
+              loading="lazy"
+              decoding="async"
+              class="feature-icon"
+            >
+          {% endif %}
+
+          <h3>{{ block.settings.title }}</h3>
+          <p>{{ block.settings.description }}</p>
+
+        </div>
+      {% endfor %}
+
+    </div>
+
+  </div>
+</section>
+
+<style>
+.fabric-features {
+  padding: 40px 0;
+  text-align: center;
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+.feature-item {
+  padding: 20px;
+}
+.feature-icon {
+  width: 48px;
+  height: auto;
+  margin-bottom: 8px;
+  margin-top: 2px;
+}
+.fabric-features h3 {
+  font-size: 20px;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+.fabric-features p {
+  font-size: 16px;
+  opacity: 0.85;
+  line-height: normal;
+}
+@media (max-width: 768px) {
+  .fabric-features {
+    padding: 20px 10px;
+  }
+  .fabric-features h3 {
+    font-size: 15px;
+    margin-top: 0px;
+  }
+  .fabric-features p {
+    font-size: 14px;
+  }
+
+  .feature-item {
+    padding: 10px 0px;
+    }
+  .features-grid {
+    grid-template-columns:1fr 1fr;
+    gap: 10px;
+  }
+  .features-grid.three {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    justify-items: center;
+    align-items: center;
+    justify-content: center;
+
+  }  
+}
+
+</style>

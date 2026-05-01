@@ -1,0 +1,210 @@
+<style>
+  .flip-section {
+    padding: 30px 0px;
+  }
+  .flip-section .main-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+  }
+  .flip-section.fliped .main-wrapper {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+  }
+  .flip-section .right-wrapper {
+     display: flex;
+     flex-direction: column;
+     gap: 15px;
+  }
+  .flip-section .right-wrapper,
+  .flip-section .left-wrapper {
+    width: 50%;
+  }
+  .flip-section .main-image {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+  }
+  .flip-section .main-image.mobile {
+    display: none;
+  }
+  .flip-section .top-text {
+    color: #7a0f1d;
+    font-family: Poppins;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 110%; /* 22px */
+    text-transform: uppercase;
+  }
+  .flip-section .main-heading {
+    color: var(--Secondary, #131212);
+    {% comment %} font-family: Poppins; {% endcomment %}
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 500;
+    {% comment %} line-height: 110%; /* 44px */ {% endcomment %}
+    {% comment %} letter-spacing: -2.4px; {% endcomment %}
+    text-transform: capitalize;
+    max-width: 550px;
+  }
+  .flip-section p {
+    margin: 0;
+  }
+  .flip-section .main-desc p,
+  .flip-section .main-desc {
+    color: #646464;
+    font-family: Poppins;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%; /* 30px */
+    letter-spacing: -0.4px;
+    max-width: 540px;
+  }
+  @media(max-width: 1024px){
+    .flip-section .main-heading{
+      font-size: 30px;
+    }
+    .flip-section .top-text{
+      font-size: 16px;
+    }
+    .flip-section .main-desc p,
+    .flip-section .main-desc {
+      font-size: 16px;
+    }
+  }
+  @media(max-width: 989px) {
+     .flip-section .main-wrapper ,
+     .flip-section.fliped .main-wrapper {
+       flex-direction: column;
+       gap: 10px;
+       align-items: flex-start;
+       justify-content: flex-start;
+     }
+    .flip-section .left-wrapper ,
+    .flip-section .main-image.desktop {
+      display: none;
+    }
+    .flip-section .main-image.mobile {
+      display: flex;
+    }
+
+    .flip-section .right-wrapper,
+    .flip-section .left-wrapper {
+      width: 100%;
+    }
+  }
+
+  @media(max-width: 550px) {
+    .flip-section .top-text{
+      color: var(--Secondary, #7a0f1d);
+      font-family: Poppins;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 110%; /* 15.4px */
+      text-transform: uppercase;
+    }
+    .flip-section .main-heading{
+      color: var(--Secondary, #131212);
+      {% comment %} font-family: Poppins; {% endcomment %}
+      font-size: 28px;
+      font-style: normal;
+      font-weight: 500;
+      {% comment %} line-height: 110%; /* 39.6px */ {% endcomment %}
+      {% comment %} letter-spacing: -2.16px; {% endcomment %}
+      text-transform: capitalize;
+      max-width: 370px;
+    }
+    .flip-section .main-desc p,
+    .flip-section .main-desc {
+      color: #646464;
+      font-family: Poppins;
+      font-size: 15px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 130%; /* 22.5px */
+      letter-spacing: -0.3px;
+    }
+  }
+  {% comment %} @media(max-width: 375px) {
+    .flip-section .main-heading{
+      font-size: 28px;
+    }
+  } {% endcomment %}
+</style>
+
+<section class="flip-section {% if section.settings.flip == true %}fliped {% endif %}">
+  <div class="page-width">
+    <div class="main-wrapper">
+      <div class="left-wrapper">
+        <img
+          class="main-image desktop"
+          width=""
+          height=""
+          alt="Section Image"
+          loading="lazy"
+          src="{{ section.settings.image | img_url: '' }}"
+        >
+      </div>
+      <div class="right-wrapper">
+        <span class="top-text">{{ section.settings.top_head }}</span>
+        <h3 class="main-heading">{{ section.settings.head }}</h3>
+        <img
+          class="main-image mobile"
+          width=""
+          height=""
+          alt="Section Image"
+          loading="lazy"
+          src="{{ section.settings.image | img_url: '' }}"
+        >
+        <p class="main-desc">{{ section.settings.deesc }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Flip Section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "flip",
+      "label": "Flip Section",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "top_head",
+      "label": "Top Heading"
+    },
+    {
+      "type": "text",
+      "id": "head",
+      "label": "Main Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "deesc",
+      "label": " Description"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Main Image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flip Section"
+    }
+  ]
+}
+{% endschema %}
